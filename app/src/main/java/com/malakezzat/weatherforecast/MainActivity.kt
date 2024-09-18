@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.malakezzat.weatherforecast.alert.view.AlertFragment
 import com.malakezzat.weatherforecast.databinding.ActivityMainBinding
+import com.malakezzat.weatherforecast.dialog.LocationDialogFragment
 import com.malakezzat.weatherforecast.favorite.view.FavoriteFragment
 import com.malakezzat.weatherforecast.home.view.HomeFragment
 import com.malakezzat.weatherforecast.settings.view.SettingsFragment
@@ -21,7 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -30,22 +31,26 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
 
-        // Set up the custom toolbar as the action bar
+        showNoticeDialog()
+
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.title = " "
 
-        // Setup the hamburger menu with DrawerLayout
+        //TODO get data from dialog and use gps or map
+        // set notification
+        // use shared perfrances
+
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
+
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.setHomeAsUpIndicator(R.drawable.ic_hamburger)
         toggle.syncState()
 
 
-        // Display the default fragment (Home) when the activity starts
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, HomeFragment())
@@ -80,12 +85,26 @@ class MainActivity : AppCompatActivity() {
         binding.toolbarTitle.text = title
     }
 
+    fun showNoticeDialog() {
+        // Create an instance of the dialog fragment and show it.
+        val dialog = LocationDialogFragment()
+        dialog.show(supportFragmentManager, "LocationDialogFragment")
+    }
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onDialogPositiveClick(data: String) {
+        Log.i("locationDialogTest", "onDialogPositiveClick: $data")
+    }
+
+    override fun onDialogCancel() {
+        finish()
     }
 }
 
