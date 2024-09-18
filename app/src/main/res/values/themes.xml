@@ -3,28 +3,33 @@
     <style name="Base.Theme.WeatherForecast" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:fontFamily">@font/app</item>
     </style>
 
     <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:layout_height">56dp</item>
         <item name="android:elevation">4dp</item>
         <item name="titleTextAppearance">@style/ToolbarTitleText</item>
+        <item name="android:fontFamily">@font/app</item>
     </style>
 
     <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">20sp</item>
         <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/app</item>
     </style>
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <!-- Customize popup menu background, text color, etc. -->
         <item name="android:popupBackground">?attr/colorPrimary</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">@font/app</item>
     </style>
 
     <style name="CustomNavigationView" parent="Widget.MaterialComponents.NavigationView">
         <item name="android:itemBackground">@drawable/nav_item_background</item>
+        <item name="android:fontFamily">@font/app</item>
     </style>
 
     <style name="Theme.WeatherForecast" parent="Base.Theme.WeatherForecast" />

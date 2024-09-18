@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         // Set up the custom toolbar as the action bar
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
+        supportActionBar?.title = " "
 
         // Setup the hamburger menu with DrawerLayout
         val toggle = ActionBarDrawerToggle(
