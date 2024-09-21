@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.malakezzat.weatherforecast.databinding.ActivityInitBinding
 import com.malakezzat.weatherforecast.dialog.LocationDialogFragment
+import com.malakezzat.weatherforecast.location.OsmMapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,14 +56,18 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         if(sharedPreferences.getBoolean(getString(R.string.first_run),true)) {
             showNoticeDialog()
         } else {
-            if (checkPermissions()) {
-                if (!isLocationEnabled()) {
-                    showEnableLocationDialog()
+            if(sharedPreferences.getBoolean(getString(R.string.gps),false)){
+                if (checkPermissions()) {
+                    if (!isLocationEnabled()) {
+                        showEnableLocationDialog()
+                    } else {
+                        startMainActivity()
+                    }
                 } else {
-                    startMainActivity()
+                    binding.permissionCard.visibility = View.VISIBLE
                 }
-            } else {
-                binding.permissionCard.visibility = View.VISIBLE
+            } else if(sharedPreferences.getBoolean(getString(R.string.map),false)){
+                startMainActivity()
             }
         }
 
@@ -116,7 +121,8 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
                     LOCATION_PERMISSION)
             }
         } else if(map == true){
-
+            supportFragmentManager.beginTransaction()
+                .add(android.R.id.content, OsmMapFragment()).commit()
         }
 
     }

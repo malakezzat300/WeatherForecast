@@ -15,7 +15,7 @@ data class ListF(
     val clouds: Clouds,
     val wind: Wind,
     val visibility: Long,
-    val pop: Long,
+    val pop: Double,
     val sys: Sys,
     val dt_txt: String,
 )

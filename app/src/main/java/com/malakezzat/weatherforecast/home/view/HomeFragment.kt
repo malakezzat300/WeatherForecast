@@ -51,7 +51,6 @@ class HomeFragment : Fragment() {
     private lateinit var factory: HomeViewModelFactory
     private lateinit var repository : WeatherRepository
     private lateinit var binding : FragmentHomeBinding
-    private lateinit var viewModelFactory: HomeViewModelFactory
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : Editor
     private lateinit var fusedClient : FusedLocationProviderClient
@@ -83,10 +82,14 @@ class HomeFragment : Fragment() {
         var lat = sharedPreferences.getString(getString(R.string.lat),"0.0") ?: "0.0"
         var lon = sharedPreferences.getString(getString(R.string.lon),"0.0") ?: "0.0"
 
+        if(sharedPreferences.getBoolean(getString(R.string.gps),false)){
+            getFreshLocation()
+        } else if(sharedPreferences.getBoolean(getString(R.string.map),false)){
+
+        }
+
         Log.i(TAG, "onViewCreated: lat: $lat")
         Log.i(TAG, "onViewCreated: lon: $lon")
-
-        getFreshLocation()
 
         viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble())
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weatherResponse ->
@@ -101,6 +104,7 @@ class HomeFragment : Fragment() {
         viewModel.fetchForecastData(lat.toDouble(), lon.toDouble())
         viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = TempAdapter(requireContext())
+            Log.i(TAG, "onViewCreated: $forecastResponse")
             recyclerAdapter.submitList(forecastResponse.list.toMutableList())
             binding.tempRecyclerView.apply {
                 adapter = recyclerAdapter
