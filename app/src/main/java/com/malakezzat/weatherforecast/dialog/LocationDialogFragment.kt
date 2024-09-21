@@ -1,21 +1,28 @@
 package com.malakezzat.weatherforecast.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.DialogLocationBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+
 
 class LocationDialogFragment : DialogFragment() {
 
     private var _binding: DialogLocationBinding? = null
     private val binding get() = _binding!!
+    private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var editor : Editor
 
     interface LocationDialogListener {
-        fun onDialogPositiveClick(data: String)
+        fun onDialogPositiveClick(data: Map<String,Boolean>)
         fun onDialogCancel()
     }
 
@@ -24,6 +31,9 @@ class LocationDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
+
+            sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
+            editor = sharedPreferences.edit()
 
             _binding = DialogLocationBinding.inflate(layoutInflater)
             listener = it as? LocationDialogListener
@@ -35,9 +45,14 @@ class LocationDialogFragment : DialogFragment() {
             binding.notificationSwitch.isChecked = true
 
             binding.okButton.setOnClickListener {
-                listener.onDialogPositiveClick("gps: ${binding.gpsRadioButton.isChecked} \n" +
-                        "map: ${binding.mapRadioButton.isChecked} \n" +
-                        "notification: ${binding.notificationSwitch.isChecked}" )
+                val data = mapOf(
+                    getString(R.string.gps) to binding.gpsRadioButton.isChecked,
+                    getString(R.string.map) to binding.mapRadioButton.isChecked,
+                    getString(R.string.notification) to binding.notificationSwitch.isChecked
+                )
+                editor.putBoolean(getString(R.string.first_run),false)
+                editor.commit()
+                listener.onDialogPositiveClick(data)
                 dismiss()
             }
 

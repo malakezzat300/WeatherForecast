@@ -5,46 +5,74 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.malakezzat.mvvmdemo.model.WeatherRepository
-import kotlinx.coroutines.Dispatchers
+import com.malakezzat.weatherforecast.model.ForecastResponse
+import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.WeatherRepository
+import com.malakezzat.weatherforecast.model.WeatherResponse
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
 
-//    companion object{
-//        private const val TAG: String = "HomeViewModel"
-//    }
+    private val _currentWeather = MutableLiveData<WeatherResponse>()
+    val currentWeather: LiveData<WeatherResponse> get() = _currentWeather
 
-//    private val _productList = MutableLiveData<List<Product>>()
-//    val onlineProduct : LiveData<List<Product>> = _productList
-//
-//    init {
-//        getAllProducts()
-//    }
+    private val _currentForecast = MutableLiveData<ForecastResponse>()
+    val currentForecast: LiveData<ForecastResponse> get() = _currentForecast
 
-//    fun insertProduct(productDB: ProductDB){
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _iRepo.insertProduct(productDB)
-//            getAllProducts()
-//        }
-//    }
-//
-//    fun deleteProduct(productDB: ProductDB){
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _iRepo.deleteProduct(productDB)
-//            getAllProducts()
-//        }
-//    }
-//
-//    private fun getWeatherOverNetwork(){
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val product = weatherRepository.getWeatherOverNetwork(lat = 1.2, lon = 1.2)
-//            withContext(Dispatchers.Main){
-//                Log.i(TAG, "getAllProducts: $product")
-//                _productList.postValue(product)
-//            }
-//        }
-//    }
+    private val _currentForecastDays = MutableLiveData<ForecastResponse>()
+    val currentForecastDays : LiveData<ForecastResponse> get() = _currentForecastDays
+
+    fun fetchWeatherData(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            try {
+                getWeatherData(lat, lon)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to fetch weather data: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchForecastData(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            try {
+                getForecastData(lat, lon)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to fetch forecast data: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchForecastDataDays(lat: Double,lon: Double,cnt : Int) {
+        viewModelScope.launch {
+            try {
+                getForecastDataDays(lat,lon,cnt)
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to fetch forecast data: ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun getWeatherData(lat : Double, lon : Double) {
+        val weatherData = weatherRepository.getWeatherOverNetwork(lat = lat, lon = lon)
+        _currentWeather.postValue(weatherData)
+    }
+
+
+    private suspend fun getForecastData(lat : Double, lon : Double) {
+        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon)
+        _currentForecast.postValue(forecastData)
+    }
+
+    private suspend fun getForecastDataDays(lat : Double, lon : Double,cnt : Int) {
+        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, cnt = cnt)
+        _currentForecastDays.postValue(forecastData)
+    }
+
+
+
+
 
 }

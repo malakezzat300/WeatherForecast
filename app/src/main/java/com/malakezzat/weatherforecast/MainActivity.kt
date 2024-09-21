@@ -1,28 +1,20 @@
 package com.malakezzat.weatherforecast
 
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.google.android.material.navigation.NavigationView
 import com.malakezzat.weatherforecast.alert.view.AlertFragment
 import com.malakezzat.weatherforecast.databinding.ActivityMainBinding
-import com.malakezzat.weatherforecast.dialog.LocationDialogFragment
 import com.malakezzat.weatherforecast.favorite.view.FavoriteFragment
 import com.malakezzat.weatherforecast.home.view.HomeFragment
 import com.malakezzat.weatherforecast.settings.view.SettingsFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogListener {
+
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -31,15 +23,10 @@ class MainActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
 
-        showNoticeDialog()
 
         val toolbar: Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.title = " "
-
-        //TODO get data from dialog and use gps or map
-        // set notification
-        // use shared perfrances
 
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, toolbar,
@@ -85,11 +72,7 @@ class MainActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         binding.toolbarTitle.text = title
     }
 
-    fun showNoticeDialog() {
-        // Create an instance of the dialog fragment and show it.
-        val dialog = LocationDialogFragment()
-        dialog.show(supportFragmentManager, "LocationDialogFragment")
-    }
+
 
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -99,13 +82,6 @@ class MainActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         }
     }
 
-    override fun onDialogPositiveClick(data: String) {
-        Log.i("locationDialogTest", "onDialogPositiveClick: $data")
-    }
-
-    override fun onDialogCancel() {
-        finish()
-    }
 }
 
 //        val weatherRemoteDataSource = WeatherRemoteDataSourceImpl.getInstance()

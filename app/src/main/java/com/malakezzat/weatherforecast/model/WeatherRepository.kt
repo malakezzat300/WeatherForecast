@@ -1,6 +1,4 @@
-package com.malakezzat.mvvmdemo.model
-
-import com.malakezzat.weatherforecast.model.WeatherResponse
+package com.malakezzat.weatherforecast.model
 
 
 interface WeatherRepository {
@@ -9,4 +7,9 @@ interface WeatherRepository {
                                       units: String = " ",
                                       lang: String = "en") : WeatherResponse
 
+    suspend fun getForecastOverNetwork(lat: Double,
+                                      lon: Double,
+                                      cnt : Int = 7,
+                                      units: String = " ",
+                                      lang: String = "en") : ForecastResponse
 }

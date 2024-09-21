@@ -8,4 +8,23 @@
     <string name="location">Location</string>
     <string name="notification">notification</string>
     <string name="ok">OK</string>
+    <string name="my_preference">MyPreference</string>
+    <string name="lat">lat</string>
+    <string name="lon">lon</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cannot_fetch_location">we cannot fetch your location.</string>
+    <string name="please_allow_weather_to_access_your_location">Please allow Weather to access your location.</string>
+    <string name="allow">Allow</string>
+    <string name="first_run">First Run</string>
+    <string name="cloud">Cloud</string>
+    <string name="ultra_violet">Ultra Violet</string>
+    <string name="visibility">Visibility</string>
+    <string name="humidity">Humidity</string>
+    <string name="hpa">" hpa"</string>
+    <string name="percentage">" %"</string>
+    <string name="speed">" m/s"</string>
+    <string name="vision">" m"</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+
 </resources>

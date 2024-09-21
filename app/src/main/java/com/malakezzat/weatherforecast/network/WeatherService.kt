@@ -1,6 +1,7 @@
-package com.malakezzat.weatherforecast
+package com.malakezzat.weatherforecast.network
 
 
+import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -19,4 +20,14 @@ interface WeatherService {
         @Query("appid") apiKey: String = api
     ): WeatherResponse
 
+    @GET("forecast")
+    suspend fun getForecast(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("cnt") cnt: Int = 7,
+        @Query("units") units: String = "",
+        @Query("lang") lang: String = "en",
+        @Query("appid") apiKey: String = api
+    ): ForecastResponse
 }
+

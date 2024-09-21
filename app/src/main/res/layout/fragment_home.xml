@@ -3,24 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <variable
+            name="weatherResponse"
+            type="com.malakezzat.weatherforecast.model.WeatherResponse" />
 
+        <variable
+            name="date"
+            type="String" />
 
+        <variable
+            name="sunset"
+            type="String" />
+
+        <variable
+            name="sunrise"
+            type="String" />
     </data>
-    <ScrollView
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".home.view.HomeFragment">
 
         <TextView
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Hello home"
+            android:layout_marginTop="4dp"
+            android:text="@{weatherResponse.name}"
             android:fontFamily="@font/app"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="@{date}"
             android:fontFamily="@font/app"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/app"
-                android:text="clear sky"
+                android:text="@{weatherResponse.weather[0].description}"
                 android:layout_marginTop="18dp"
                 android:elevation="12dp"
                 android:textSize="18sp"
@@ -75,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/app"
-                android:text="13C"
+                formattedTemperature="@{weatherResponse.main.temp}"
                 android:textSize="56sp"
                 android:layout_marginTop="12dp"
                 android:elevation="12dp"
@@ -101,7 +122,7 @@
             android:id="@+id/temp_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="76dp"
+            android:layout_marginTop="8dp"
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,6 +130,7 @@
             app:layout_constraintTop_toBottomOf="@+id/button"
             android:orientation="horizontal"
             tools:listitem="@layout/temp_hours_item"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -144,7 +166,8 @@
                     android:id="@+id/pressure_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_pressure"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/humidity_image"/>
@@ -154,7 +177,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{weatherResponse.main.pressure+@string/hpa}"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/pressure_image" />
@@ -164,7 +187,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="Pressure"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
@@ -174,8 +197,9 @@
                     android:id="@+id/cloud_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
+                    android:padding="8dp"
                     android:layout_marginTop="24dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:src="@drawable/ic_cloud"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/pressure_word" />
@@ -185,7 +209,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{weatherResponse.clouds.all+@string/percentage}"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/cloud_image" />
@@ -195,7 +219,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@string/cloud"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/cloud_text" />
@@ -205,7 +229,8 @@
                     android:id="@+id/humidity_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_humidity"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/wind_image"
                     app:layout_constraintStart_toEndOf="@+id/pressure_image"/>
@@ -215,7 +240,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{weatherResponse.main.humidity+@string/percentage}"
                     app:layout_constraintEnd_toEndOf="@+id/humidity_image"
                     app:layout_constraintStart_toStartOf="@+id/humidity_image"
                     app:layout_constraintTop_toBottomOf="@+id/humidity_image" />
@@ -225,18 +250,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@string/humidity"
                     app:layout_constraintEnd_toEndOf="@+id/humidity_image"
                     app:layout_constraintStart_toStartOf="@+id/humidity_image"
                     app:layout_constraintTop_toBottomOf="@+id/humidity_text" />
 
 
                 <ImageView
-                    android:id="@+id/ultra_violet_image"
+                    android:id="@+id/sunset_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
+                    android:padding="8dp"
                     android:layout_marginTop="24dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:src="@drawable/ic_sunset"
                     app:layout_constraintEnd_toEndOf="@+id/humidity_image"
                     app:layout_constraintStart_toStartOf="@+id/humidity_image"
                     app:layout_constraintTop_toBottomOf="@+id/humidity_word" />
@@ -246,17 +272,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{sunset}"
                     app:layout_constraintEnd_toEndOf="@+id/humidity_image"
                     app:layout_constraintStart_toStartOf="@+id/humidity_image"
-                    app:layout_constraintTop_toBottomOf="@+id/ultra_violet_image" />
+                    app:layout_constraintTop_toBottomOf="@+id/sunset_image" />
 
                 <TextView
-                    android:id="@+id/ultra_violet_word"
+                    android:id="@+id/sunset_word"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@string/sunset"
                     app:layout_constraintEnd_toEndOf="@+id/humidity_image"
                     app:layout_constraintStart_toStartOf="@+id/humidity_image"
                     app:layout_constraintTop_toBottomOf="@+id/ultra_violet_text" />
@@ -266,7 +292,8 @@
                     android:id="@+id/wind_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_wind"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/humidity_image"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -276,7 +303,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{weatherResponse.wind.speed+@string/speed}"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/wind_image" />
@@ -286,18 +313,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="Wind"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/wind_text" />
 
 
                 <ImageView
-                    android:id="@+id/visibility_image"
+                    android:id="@+id/sunrise_image"
                     android:layout_width="68dp"
                     android:layout_height="68dp"
+                    android:padding="8dp"
                     android:layout_marginTop="24dp"
-                    android:src="@drawable/ic_launcher_foreground"
+                    android:src="@drawable/ic_sunrise"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/wind_word" />
@@ -307,17 +335,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@{sunrise}"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
-                    app:layout_constraintTop_toBottomOf="@+id/visibility_image" />
+                    app:layout_constraintTop_toBottomOf="@+id/sunrise_image" />
 
                 <TextView
-                    android:id="@+id/visibility_word"
+                    android:id="@+id/sunrise_word"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="placeholder"
+                    android:text="@string/sunrise"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/visibility_text" />
@@ -330,6 +358,7 @@
         </androidx.cardview.widget.CardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

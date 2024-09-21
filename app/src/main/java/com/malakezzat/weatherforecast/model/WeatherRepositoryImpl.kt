@@ -1,7 +1,7 @@
-package com.malakezzat.mvvmdemo.model
+package com.malakezzat.weatherforecast.model
 
-import com.malakezzat.weatherforecast.WeatherRemoteDataSource
-import com.malakezzat.weatherforecast.model.WeatherResponse
+import android.util.Log
+import com.malakezzat.weatherforecast.network.WeatherRemoteDataSource
 
 class WeatherRepositoryImpl(
     private var weatherRemoteDataSource: WeatherRemoteDataSource
@@ -14,5 +14,15 @@ class WeatherRepositoryImpl(
         lang: String
     ): WeatherResponse {
        return weatherRemoteDataSource.getWeatherOverNetwork(lat,lon,units,lang)
+    }
+
+    override suspend fun getForecastOverNetwork(
+        lat: Double,
+        lon: Double,
+        cnt : Int,
+        units: String,
+        lang: String
+    ): ForecastResponse {
+        return weatherRemoteDataSource.getForecastOverNetwork(lat,lon,cnt,units,lang)
     }
 }
