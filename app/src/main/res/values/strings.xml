@@ -1,26 +1,26 @@
 <resources>
     <string name="app_name">Weather Forecast</string>
-    <string name="navigation_drawer_open">open</string>
-    <string name="navigation_drawer_close">close</string>
-    <string name="initial_setup">Initial Setup</string>
+    <string name="navigation_drawer_open" translatable="false">open</string>
+    <string name="navigation_drawer_close" translatable="false">close</string>
+    <string name="initial_setup" translatable="false">Initial Setup</string>
     <string name="gps">GPS</string>
     <string name="map">Map</string>
     <string name="location">Location</string>
     <string name="notification">Notification</string>
     <string name="ok">OK</string>
-    <string name="my_preference">MyPreference</string>
-    <string name="lat">lat</string>
-    <string name="lon">lon</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_preference" translatable="false">MyPreference</string>
+    <string name="lat" translatable="false">lat</string>
+    <string name="lon" translatable="false">lon</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="cannot_fetch_location">we cannot fetch your location.</string>
-    <string name="please_allow_weather_to_access_your_location">Please allow Weather to access your location.</string>
+    <string name="please_allow_weather_to_access_your_location">Please allow App to access your location.</string>
     <string name="allow">Allow</string>
-    <string name="first_run">First Run</string>
+    <string name="first_run" translatable="false">First Run</string>
     <string name="cloud">Cloud</string>
     <string name="ultra_violet">Ultra Violet</string>
     <string name="visibility">Visibility</string>
     <string name="humidity">Humidity</string>
-    <string name="hpa">" hpa"</string>
+    <string name="hpa" translatable="false">" hpa"</string>
     <string name="percentage">" %"</string>
     <string name="speed">" m/s"</string>
     <string name="vision">" m"</string>
@@ -34,11 +34,38 @@
     <string name="mile_hour">Mile / Hour</string>
     <string name="meter_sec">Meter / Sec</string>
     <string name="temperature">Temperature</string>
-    <string name="kelvin">Kelvin</string>
-    <string name="fahrenheit">Fahrenheit</string>
-    <string name="celsius">Celsius</string>
+    <string name="kelvin">K</string>
+    <string name="fahrenheit">°F</string>
+    <string name="celsius">°C</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
     <string name="wind_speed">Wind Speed</string>
+
+
+    <string name="lat_pref" translatable="false">lat</string>
+    <string name="lon_pref" translatable="false">lon</string>
+    <string name="gps_pref" translatable="false">GPS</string>
+    <string name="map_pref" translatable="false">Map</string>
+    <string name="location_pref" translatable="false">Location</string>
+    <string name="notification_pref" translatable="false">Notification</string>
+    <string name="language_pref" translatable="false">Language</string>
+    <string name="english_pref" translatable="false">English</string>
+    <string name="arabic_pref" translatable="false">Arabic</string>
+    <string name="mile_hour_pref" translatable="false">Mile / Hour</string>
+    <string name="meter_sec_pref" translatable="false">Meter / Sec</string>
+    <string name="temperature_pref" translatable="false">Temperature</string>
+    <string name="kelvin_pref" translatable="false">Kelvin</string>
+    <string name="fahrenheit_pref" translatable="false">Fahrenheit</string>
+    <string name="celsius_pref" translatable="false">Celsius</string>
+    <string name="enable_pref" translatable="false">Enable</string>
+    <string name="disable_pref" translatable="false">Disable</string>
+    <string name="wind_speed_pref" translatable="false">Wind Speed</string>
+    <string name="home">Home</string>
+    <string name="alert">Alert</string>
+    <string name="favorite">Favorite</string>
+    <string name="settings">Settings</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="tomorrow">Tomorrow</string>
 
 </resources>

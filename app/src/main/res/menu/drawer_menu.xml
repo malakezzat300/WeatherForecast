@@ -2,17 +2,17 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
-        android:title="Home" />
+        android:title="@string/home" />
     <item
         android:id="@+id/nav_alert"
         android:icon="@drawable/ic_alert"
-        android:title="Alert" />
+        android:title="@string/alert" />
     <item
         android:id="@+id/nav_favorite"
         android:icon="@drawable/ic_favorite"
-        android:title="Favorite" />
+        android:title="@string/favorite" />
     <item
         android:id="@+id/nav_settings"
         android:icon="@drawable/ic_settings"
-        android:title="Settings" />
+        android:title="@string/settings" />
 </menu>

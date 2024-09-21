@@ -2,6 +2,7 @@ package com.malakezzat.weatherforecast.home.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -37,8 +38,8 @@ class DayAdapter (val context : Context) : ListAdapter<DayWeather, DayAdapter.Vi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(position == 0){
-         getItem(position).day = "Tomorrow"
-         binding.constraintCard.setBackgroundResource(R.drawable.button_background)
+             getItem(position).day = context.getString(R.string.tomorrow)
+             binding.constraintCard.setBackgroundResource(R.drawable.button_background)
         }
         binding.dayItem = getItem(position)
     }
@@ -46,6 +47,7 @@ class DayAdapter (val context : Context) : ListAdapter<DayWeather, DayAdapter.Vi
     class ViewHolder(val binding: DayTempItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     companion object{
+        const val TAG = "DayAdapter"
 
         @BindingAdapter("icon","myError")
         @JvmStatic
@@ -62,18 +64,5 @@ class DayAdapter (val context : Context) : ListAdapter<DayWeather, DayAdapter.Vi
             //textView.text = String.format("%.1f °F", temperature)
         }
     }
-
-
-//    fun getFiveDaysMinMaxTemps(forecastResponse: ForecastResponse): List<DayTemperature> {
-//        val fiveDaysData = mutableListOf<DayTemperature>()
-//        val uniqueDates = forecastResponse.list.map { it.dt_txt.substring(0, 10) }.distinct().take(5)
-//
-//        for (date in uniqueDates) {
-//            val (minTemp, maxTemp) = getMinMaxTempForDay(forecastResponse.list, date)
-//            fiveDaysData.add(DayTemperature(date, minTemp, maxTemp))
-//        }
-//
-//        return fiveDaysData
-//    }
 
 }

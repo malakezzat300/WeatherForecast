@@ -18,6 +18,15 @@
         <variable
             name="sunrise"
             type="String" />
+
+        <variable
+            name="windSpeed"
+            type="String" />
+
+        <variable
+            name="temp"
+            type="String" />
+
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -96,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/app"
-                formattedTemperature="@{weatherResponse.main.temp}"
+                android:text="@{temp}"
                 android:textSize="56sp"
                 android:layout_marginTop="12dp"
                 android:elevation="12dp"
@@ -187,7 +196,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Pressure"
+                    android:text="@string/pressure"
                     app:layout_constraintEnd_toEndOf="@+id/pressure_image"
                     app:layout_constraintStart_toStartOf="@+id/pressure_image"
                     app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
@@ -303,7 +312,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{weatherResponse.wind.speed+@string/speed}"
+                    android:text="@{windSpeed}"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/wind_image" />
@@ -313,7 +322,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Wind"
+                    android:text="@string/wind"
                     app:layout_constraintEnd_toEndOf="@+id/wind_image"
                     app:layout_constraintStart_toStartOf="@+id/wind_image"
                     app:layout_constraintTop_toBottomOf="@+id/wind_text" />

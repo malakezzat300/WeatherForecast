@@ -31,6 +31,7 @@ import com.malakezzat.weatherforecast.location.OsmMapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogListener {
@@ -45,12 +46,14 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
     private lateinit var editor : Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPreferences = getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+
+
+
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_init)
         binding.lifecycleOwner = this
-
-        sharedPreferences = getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
 
 
         if(sharedPreferences.getBoolean(getString(R.string.first_run),true)) {
@@ -101,9 +104,9 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         val map = data[getString(R.string.map)]
         val notification = data[getString(R.string.notification)]
 
-        editor.putBoolean(getString(R.string.gps),gps ?: false)
-        editor.putBoolean(getString(R.string.map),map ?: false)
-        editor.putBoolean(getString(R.string.notification),notification ?: false)
+        editor.putBoolean(getString(R.string.gps_pref),gps ?: false)
+        editor.putBoolean(getString(R.string.map_pref),map ?: false)
+        editor.putBoolean(getString(R.string.notification_pref),notification ?: false)
         editor.commit()
 
         if(gps == true){
@@ -150,7 +153,7 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         }
     }
 
-    private fun showEnableLocationDialog() {
+    fun showEnableLocationDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Location Services Disabled")
             .setMessage("Please enable location services to use this feature.")
@@ -196,5 +199,7 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         finishAffinity()
         finish()
     }
+
+
 
 }

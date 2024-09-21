@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Weather Forecast</string>
+    <string name="gps">نظام تحديد المواقع</string>
+    <string name="map">خريطة</string>
+    <string name="location">موقع</string>
+    <string name="notification">اشعارات</string>
+    <string name="ok">تأكيد</string>
+    <string name="cannot_fetch_location">لا يمكننا الحصول على موقعك.</string>
+    <string name="please_allow_weather_to_access_your_location">يرجى السماح للتطبيق بالوصول إلى موقعك.</string>
+    <string name="allow">سماح</string>
+    <string name="cloud">سحب</string>
+    <string name="ultra_violet">اشعة فوق بنفسجية</string>
+    <string name="visibility">وضوح الرؤية</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="speed">"م / ث "</string>
+    <string name="percentage">" ٪"</string>
+    <string name="vision">م</string>
+    <string name="sunrise">الشروق</string>
+    <string name="sunset">الغروب</string>
+    <string name="save">حفظ</string>
+    <string name="unknown_location">موقع غير معروف</string>
+    <string name="language">لغة</string>
+    <string name="english">انجليزي</string>
+    <string name="arabic">عربي</string>
+    <string name="mile_hour">ميل / ساعة</string>
+    <string name="meter_sec">متر / ثانية</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="kelvin">كيلفن</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="celsius">درجة مئوية</string>
+    <string name="enable">تشغيل</string>
+    <string name="disable">ايقاف</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="home">الرئيسية</string>
+    <string name="alert">تنبيهات</string>
+    <string name="favorite">مفضلة</string>
+    <string name="settings">اعدادات</string>
+    <string name="wind">الرياح</string>
+    <string name="pressure">الضغط</string>
+    <string name="tomorrow">غداً</string>
+</resources>

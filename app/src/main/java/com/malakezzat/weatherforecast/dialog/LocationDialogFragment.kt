@@ -46,9 +46,9 @@ class LocationDialogFragment : DialogFragment() {
 
             binding.okButton.setOnClickListener {
                 val data = mapOf(
-                    getString(R.string.gps) to binding.gpsRadioButton.isChecked,
-                    getString(R.string.map) to binding.mapRadioButton.isChecked,
-                    getString(R.string.notification) to binding.notificationSwitch.isChecked
+                    getString(R.string.gps_pref) to binding.gpsRadioButton.isChecked,
+                    getString(R.string.map_pref) to binding.mapRadioButton.isChecked,
+                    getString(R.string.notification_pref) to binding.notificationSwitch.isChecked
                 )
                 editor.putBoolean(getString(R.string.first_run),false)
                 editor.commit()

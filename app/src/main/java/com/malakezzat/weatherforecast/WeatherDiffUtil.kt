@@ -17,7 +17,7 @@ class ForecastDiffUtil : DiffUtil.ItemCallback<ListF>() {
 
 class ForecastDiffUtilDays : DiffUtil.ItemCallback<DayWeather>() {
     override fun areItemsTheSame(oldItem: DayWeather, newItem: DayWeather): Boolean {
-        return oldItem.day == newItem.day
+        return oldItem.temp == newItem.temp
     }
 
     override fun areContentsTheSame(oldItem: DayWeather, newItem: DayWeather): Boolean {

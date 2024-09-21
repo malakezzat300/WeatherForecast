@@ -1,83 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center">
+
     <data>
 
         <variable
             name="dayItem"
             type="com.malakezzat.weatherforecast.model.DayWeather" />
+
         <variable
             name="time"
             type="String" />
 
     </data>
+
     <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="12dp"
         android:layout_margin="4dp"
-        android:layout_width="match_parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        app:cardCornerRadius="32dp"
+        app:cardElevation="12dp">
+
+        <LinearLayout
             android:id="@+id/constraint_card"
-            android:padding="12dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:weightSum="12">
 
             <TextView
                 android:id="@+id/day_text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="@{dayItem.day}"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:textAlignment="center"
                 android:textSize="14sp"
+                android:text="@{dayItem.day}"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/hour_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintGuide_begin="70dp" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="test" />
 
             <ImageView
                 android:id="@+id/hour_icon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="12dp"
-                android:padding="4dp"
                 icon="@{dayItem.icon}"
                 myError="@{@drawable/ic_launcher_foreground}"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/day_state_text"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="@+id/day_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/day_state_text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:gravity="center"
                 android:text="@{dayItem.description}"
+                android:textAlignment="center"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/temp_text"
                 app:layout_constraintStart_toEndOf="@+id/hour_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/temp_text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="3"
+                android:gravity="center"
                 android:text="@{dayItem.temp}"
+                android:textAlignment="center"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/day_state_text"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

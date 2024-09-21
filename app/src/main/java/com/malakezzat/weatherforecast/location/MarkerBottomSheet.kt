@@ -66,8 +66,8 @@ class MarkerBottomSheet (
             binding.saveButton.setOnClickListener {
                 val lat : String = latitude.toString()
                 val lon : String = longitude.toString()
-                editor.putString(requireContext().getString(R.string.lat), lat)
-                editor.putString(requireContext().getString(R.string.lon), lon)
+                editor.putString(requireContext().getString(R.string.lat_pref), lat)
+                editor.putString(requireContext().getString(R.string.lon_pref), lon)
                 editor.apply()
                 Log.i(TAG, "getFreshLocation: start MainActivity")
                 val intent = Intent(requireContext(), MainActivity::class.java)

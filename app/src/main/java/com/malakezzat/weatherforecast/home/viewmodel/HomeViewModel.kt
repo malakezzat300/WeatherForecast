@@ -25,49 +25,49 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     private val _currentForecastDays = MutableLiveData<ForecastResponse>()
     val currentForecastDays : LiveData<ForecastResponse> get() = _currentForecastDays
 
-    fun fetchWeatherData(lat: Double, lon: Double) {
+    fun fetchWeatherData(lat: Double, lon: Double,units : String = "",lang: String = "") {
         viewModelScope.launch {
             try {
-                getWeatherData(lat, lon)
+                getWeatherData(lat, lon,units,lang)
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to fetch weather data: ${e.message}")
             }
         }
     }
 
-    fun fetchForecastData(lat: Double, lon: Double) {
+    fun fetchForecastData(lat: Double, lon: Double,units : String = "",lang: String = "") {
         viewModelScope.launch {
             try {
-                getForecastData(lat, lon)
+                getForecastData(lat, lon,units,lang)
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to fetch forecast data: ${e.message}")
             }
         }
     }
 
-    fun fetchForecastDataDays(lat: Double,lon: Double,cnt : Int) {
+    fun fetchForecastDataDays(lat: Double,lon: Double,cnt : Int,units : String = "",lang: String = "") {
         viewModelScope.launch {
             try {
-                getForecastDataDays(lat,lon,cnt)
+                getForecastDataDays(lat,lon,cnt,units,lang)
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to fetch forecast data: ${e.message}")
             }
         }
     }
 
-    private suspend fun getWeatherData(lat : Double, lon : Double) {
-        val weatherData = weatherRepository.getWeatherOverNetwork(lat = lat, lon = lon)
+    private suspend fun getWeatherData(lat : Double, lon : Double,units: String,lang :String) {
+        val weatherData = weatherRepository.getWeatherOverNetwork(lat = lat, lon = lon, units = units, lang = lang)
         _currentWeather.postValue(weatherData)
     }
 
 
-    private suspend fun getForecastData(lat : Double, lon : Double) {
-        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon)
+    private suspend fun getForecastData(lat : Double, lon : Double,units: String,lang :String) {
+        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, units = units, lang = lang)
         _currentForecast.postValue(forecastData)
     }
 
-    private suspend fun getForecastDataDays(lat : Double, lon : Double,cnt : Int) {
-        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, cnt = cnt)
+    private suspend fun getForecastDataDays(lat : Double, lon : Double,cnt : Int,units: String,lang :String) {
+        val forecastData = weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, cnt = cnt, units = units, lang = lang)
         _currentForecastDays.postValue(forecastData)
     }
 

@@ -13,7 +13,7 @@ class WeatherRemoteDataSourceImpl private constructor() : WeatherRemoteDataSourc
 
     override suspend fun getWeatherOverNetwork(lat: Double,lon: Double,units: String,lang: String)
                     : WeatherResponse {
-        val response = weatherService.getWeather(lat=lat,lon=lon)
+        val response = weatherService.getWeather(lat=lat,lon=lon,units = units,lang = lang)
         return response
     }
 
@@ -24,7 +24,7 @@ class WeatherRemoteDataSourceImpl private constructor() : WeatherRemoteDataSourc
         units: String,
         lang: String
     ): ForecastResponse {
-        val response = weatherService.getForecast(lat=lat,lon=lon, cnt = cnt)
+        val response = weatherService.getForecast(lat=lat,lon=lon, cnt = cnt, units = units,lang = lang)
         return response
     }
 
