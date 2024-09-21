@@ -38,6 +38,7 @@ import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -112,7 +113,7 @@ class HomeFragment : Fragment() {
         viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = DayAdapter(requireContext())
 
-            recyclerAdapter.submitList(filterFiveDaysData(forecastResponse).toMutableList())
+            recyclerAdapter.submitList(forecastResponse.list.toMutableList())
             binding.daysRecyclerView.apply {
                 adapter = recyclerAdapter
                 layoutManager = LinearLayoutManager(context).apply {
@@ -203,7 +204,7 @@ class HomeFragment : Fragment() {
 
     fun filterFiveDaysData(forecastResponse: ForecastResponse): List<ListF> {
         return forecastResponse.list.filter { item ->
-            item.dt_Txt.contains("12:00:00")
+            item.dt_txt.contains("00:00:00")
         }
     }
 

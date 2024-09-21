@@ -17,7 +17,7 @@ data class ListF(
     val visibility: Long,
     val pop: Long,
     val sys: Sys,
-    val dt_Txt: String,
+    val dt_txt: String,
 )
 
 data class City(
@@ -31,3 +31,10 @@ data class City(
     val sunset: Long,
 )
 
+data class DayTemperature(
+    val date: String,
+    val minTemp: Double,
+    val maxTemp: Double,
+    val description: String,
+    val iconUrl: String
+)

@@ -11,12 +11,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.malakezzat.weatherforecast.ForecastDiffUtil
+import com.malakezzat.weatherforecast.ForecastDiffUtilDays
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.DayTempItemBinding
 import com.malakezzat.weatherforecast.databinding.TempHoursItemBinding
+import com.malakezzat.weatherforecast.model.DayTemperature
+import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
@@ -69,5 +73,51 @@ class DayAdapter (val context : Context) : ListAdapter<ListF, DayAdapter.ViewHol
 
         return formattedDate
     }
+
+
+    fun filterSingleDayData(list : List<ListF>,date : String): List<ListF> {
+        return list.filter { item ->
+            item.dt_txt.contains(date)
+        }
+    }
+
+    fun getMinMaxTempForDay(list : List<ListF>, date: String): Pair<Double, Double> {
+        // Filter list for the given date
+        val dayForecasts = list.filter { it.dt_txt.startsWith(date) }
+
+        // Extract temperatures for the day
+        val temps = dayForecasts.map { it.main.temp }
+
+        // Get the minimum and maximum temperatures
+        val minTemp = temps.minOrNull() ?: Double.NaN
+        val maxTemp = temps.maxOrNull() ?: Double.NaN
+
+        return Pair(minTemp, maxTemp)
+    }
+
+    fun getDayDate(days : Int): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd") // Define the pattern
+        val calendar = Calendar.getInstance() // Get the current date
+        calendar.add(Calendar.DAY_OF_YEAR, days) // Add one day
+        return formatter.format(calendar.time) // Format and return the date
+    }
+
+    fun filterFiveDaysData(forecastResponse: ForecastResponse): List<ListF> {
+        return forecastResponse.list.filter { item ->
+            item.dt_txt.contains("00:00:00")
+        }
+    }
+
+//    fun getFiveDaysMinMaxTemps(forecastResponse: ForecastResponse): List<DayTemperature> {
+//        val fiveDaysData = mutableListOf<DayTemperature>()
+//        val uniqueDates = forecastResponse.list.map { it.dt_txt.substring(0, 10) }.distinct().take(5)
+//
+//        for (date in uniqueDates) {
+//            val (minTemp, maxTemp) = getMinMaxTempForDay(forecastResponse.list, date)
+//            fiveDaysData.add(DayTemperature(date, minTemp, maxTemp))
+//        }
+//
+//        return fiveDaysData
+//    }
 
 }
