@@ -5,7 +5,7 @@
 
         <variable
             name="dayItem"
-            type="com.malakezzat.weatherforecast.model.ListF" />
+            type="com.malakezzat.weatherforecast.model.DayWeather" />
         <variable
             name="time"
             type="String" />
@@ -28,8 +28,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="ss"
-                android:textSize="16sp"
+                android:text="@{dayItem.day}"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintGuide_begin="80dp" />
+                app:layout_constraintGuide_begin="70dp" />
 
             <ImageView
                 android:id="@+id/hour_icon"
@@ -48,7 +48,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
                 android:padding="4dp"
-                icon="@{dayItem.weather.get(0).icon}"
+                icon="@{dayItem.icon}"
                 myError="@{@drawable/ic_launcher_foreground}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/day_state_text"
@@ -60,8 +60,8 @@
                 android:id="@+id/day_state_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{dayItem.weather.get(0).description}"
-                android:textSize="16sp"
+                android:text="@{dayItem.description}"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/hour_icon"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -70,13 +70,12 @@
                 android:id="@+id/temp_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="temp"
-                android:textSize="16sp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="12dp"
+                android:text="@{dayItem.temp}"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

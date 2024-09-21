@@ -1,7 +1,7 @@
 package com.malakezzat.weatherforecast
 
 import androidx.recyclerview.widget.DiffUtil
-import com.malakezzat.weatherforecast.model.DayTemperature
+import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherResponse
 
@@ -15,12 +15,12 @@ class ForecastDiffUtil : DiffUtil.ItemCallback<ListF>() {
 
 }
 
-class ForecastDiffUtilDays : DiffUtil.ItemCallback<DayTemperature>() {
-    override fun areItemsTheSame(oldItem: DayTemperature, newItem: DayTemperature): Boolean {
-        return oldItem.date == newItem.date
+class ForecastDiffUtilDays : DiffUtil.ItemCallback<DayWeather>() {
+    override fun areItemsTheSame(oldItem: DayWeather, newItem: DayWeather): Boolean {
+        return oldItem.day == newItem.day
     }
 
-    override fun areContentsTheSame(oldItem: DayTemperature, newItem: DayTemperature): Boolean {
+    override fun areContentsTheSame(oldItem: DayWeather, newItem: DayWeather): Boolean {
         return oldItem == newItem
     }
 }

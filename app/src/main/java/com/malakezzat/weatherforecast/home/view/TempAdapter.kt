@@ -50,7 +50,7 @@ class TempAdapter (val context : Context) : ListAdapter<ListF, TempAdapter.ViewH
 
         @BindingAdapter("formattedTemperature")
         @JvmStatic
-        fun setFormattedTemperature(textView: TextView, temperature: Double) {
+        fun setFormattedTemperature(textView: TextView, temperature: String) {
             textView.text = String.format("%.1f K", temperature)
 
             //textView.text = String.format("%.1f °C", temperature)

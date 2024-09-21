@@ -31,10 +31,9 @@ data class City(
     val sunset: Long,
 )
 
-data class DayTemperature(
-    val date: String,
-    val minTemp: Double,
-    val maxTemp: Double,
-    val description: String,
-    val iconUrl: String
+data class DayWeather(
+    var day: String,
+    val temp: String,
+    val icon: String,
+    val description: String
 )

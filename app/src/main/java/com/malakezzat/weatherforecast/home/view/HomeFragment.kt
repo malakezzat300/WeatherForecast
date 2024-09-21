@@ -35,6 +35,7 @@ import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
+import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
 import java.text.SimpleDateFormat
@@ -113,7 +114,8 @@ class HomeFragment : Fragment() {
         viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = DayAdapter(requireContext())
 
-            recyclerAdapter.submitList(forecastResponse.list.toMutableList())
+
+            recyclerAdapter.submitList(filterUniqueDaysWithMinMax(forecastResponse.list).toMutableList())
             binding.daysRecyclerView.apply {
                 adapter = recyclerAdapter
                 layoutManager = LinearLayoutManager(context).apply {
@@ -202,10 +204,44 @@ class HomeFragment : Fragment() {
             .into(binding.stateImage)
     }
 
-    fun filterFiveDaysData(forecastResponse: ForecastResponse): List<ListF> {
-        return forecastResponse.list.filter { item ->
-            item.dt_txt.contains("00:00:00")
-        }
+    fun filterUniqueDaysWithMinMax(listF: List<ListF>): List<DayWeather> {
+        val today = getCurrentDate()
+
+        val groupedByDay = listF.groupBy { item -> item.dt_txt.substring(0, 10) }
+
+        return groupedByDay
+            .filterKeys { it > today }
+            .map { (date, dayList) ->
+                val day = convertToDayOfWeek(dayList.first().dt_txt)
+
+                val minTemp = dayList.minOf { it.main.temp_min }
+                val maxTemp = dayList.maxOf { it.main.temp_max }
+
+                val temp = String.format("%.1f / %.1f K", maxTemp, minTemp)
+
+                val entryAtNoon = dayList.find { it.dt_txt.contains("09:00:00") }
+                val representativeWeather = entryAtNoon?.weather?.firstOrNull()
+
+                val icon = representativeWeather?.icon ?: dayList.first().weather.firstOrNull()?.icon ?: ""
+                val description = representativeWeather?.description ?: dayList.first().weather.firstOrNull()?.description ?: ""
+
+                DayWeather(day, temp, icon, description)
+            }
+    }
+
+    fun convertToDayOfWeek(dateString: String): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        val date: Date = sdf.parse(dateString) ?: Date()
+
+        val outputSdf = SimpleDateFormat("EEEE", Locale.getDefault())
+        return outputSdf.format(date)
+    }
+
+    fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        return sdf.format(Date())
     }
 
 }
