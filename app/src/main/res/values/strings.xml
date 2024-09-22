@@ -67,5 +67,10 @@
     <string name="wind">Wind</string>
     <string name="pressure">Pressure</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="alarm">Alarm</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="no_alerts">No Alerts</string>
+    <string name="no_places">No Places</string>
 
 </resources>

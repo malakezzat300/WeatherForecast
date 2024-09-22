@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
             recyclerAdapter.submitList(refactorTemperatureList(forecastResponse.list).toMutableList())
             binding.tempRecyclerView.apply {
                 adapter = recyclerAdapter
-                layoutManager = LinearLayoutManager(context).apply {
+                layoutManager = LinearLayoutManager(requireContext()).apply {
                     orientation = RecyclerView.HORIZONTAL
                 }
             }
@@ -142,7 +142,7 @@ class HomeFragment : Fragment() {
             recyclerAdapter.submitList(filterUniqueDaysWithMinMax(forecastResponse.list).toMutableList())
             binding.daysRecyclerView.apply {
                 adapter = recyclerAdapter
-                layoutManager = LinearLayoutManager(context).apply {
+                layoutManager = LinearLayoutManager(requireContext()).apply {
                     orientation = RecyclerView.VERTICAL
                 }
             }

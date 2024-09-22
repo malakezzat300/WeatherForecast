@@ -66,7 +66,6 @@
                 android:text="@string/map" />
         </RadioGroup>
 
-        <!-- Notification Text -->
         <TextView
             android:id="@+id/notification_text"
             android:layout_width="wrap_content"
@@ -77,7 +76,6 @@
             app:layout_constraintStart_toStartOf="@+id/ic_settings"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-        <!-- Notification Switch -->
         <Switch
             android:id="@+id/notification_switch"
             android:layout_width="wrap_content"
@@ -87,8 +85,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/notification_text" />
 
-        <!-- OK Button -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/ok_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
