@@ -2,6 +2,7 @@ package com.malakezzat.weatherforecast.home.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,20 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
 
     private val _currentForecastDays = MutableLiveData<ForecastResponse>()
     val currentForecastDays : LiveData<ForecastResponse> get() = _currentForecastDays
+
+    val combinedData = MediatorLiveData<Triple<WeatherResponse?, ForecastResponse?, ForecastResponse?>>()
+
+    init {
+        combinedData.addSource(currentWeather) { weatherResponse ->
+            combinedData.value = Triple(weatherResponse, currentForecast.value, currentForecastDays.value)
+        }
+        combinedData.addSource(currentForecast) { forecastResponse ->
+            combinedData.value = Triple(currentWeather.value, forecastResponse, currentForecastDays.value)
+        }
+        combinedData.addSource(currentForecastDays) { forecastDaysResponse ->
+            combinedData.value = Triple(currentWeather.value, currentForecast.value, forecastDaysResponse)
+        }
+    }
 
     fun fetchWeatherData(lat: Double, lon: Double,units : String = "",lang: String = "") {
         viewModelScope.launch {

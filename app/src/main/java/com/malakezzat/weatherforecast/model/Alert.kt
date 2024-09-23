@@ -7,8 +7,10 @@ import androidx.room.TypeConverters
 @Entity(tableName = "alerts")
 data class Alert(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val from: String,
-    val to: String,
+    val fromTime: String,
+    val toTime: String,
+    val fromDate: String,
+    val toDate: String,
     val type: Type
 )
 

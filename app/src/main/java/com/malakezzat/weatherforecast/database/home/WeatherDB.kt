@@ -19,7 +19,7 @@ data class WeatherDB (
     val wind: Double,
     val clouds: Int,
     val dt: Long,
-    val country: String,
+    val country: String?,
     val sunrise: Long,
     val sunset: Long,
     val name: String,

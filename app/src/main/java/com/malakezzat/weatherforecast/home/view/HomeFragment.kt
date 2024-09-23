@@ -55,26 +55,26 @@ import java.util.TimeZone
 
 class HomeFragment : Fragment() {
 
-    private val TAG : String = "HomeFragment"
+    private val TAG: String = "HomeFragment"
     private lateinit var viewModel: HomeViewModel
     private lateinit var factory: HomeViewModelFactory
-    private lateinit var repository : WeatherRepository
-    private lateinit var binding : FragmentHomeBinding
-    private lateinit var sharedPreferences : SharedPreferences
-    private lateinit var editor : Editor
-    private lateinit var fusedClient : FusedLocationProviderClient
-    private lateinit var units : String
-    private lateinit var lang : String
-    private lateinit var weatherResponseStore : WeatherResponse
-    private lateinit var tempListStore : List<ListF>
-    private lateinit var dayListStore : List<DayWeather>
+    private lateinit var repository: WeatherRepository
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: Editor
+    private lateinit var fusedClient: FusedLocationProviderClient
+    private lateinit var units: String
+    private lateinit var lang: String
+    private lateinit var weatherResponseStore: WeatherResponse
+    private lateinit var tempListStore: List<ListF>
+    private lateinit var dayListStore: List<DayWeather>
     private val isHome = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_home, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         val view = binding.root
         return view
     }
@@ -82,44 +82,50 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        repository = WeatherRepositoryImpl(WeatherRemoteDataSourceImpl.getInstance(),WeatherLocalDataSourceImpl(
-            AppDatabase.getInstance(requireContext())))
+        repository = WeatherRepositoryImpl(
+            WeatherRemoteDataSourceImpl.getInstance(), WeatherLocalDataSourceImpl(
+                AppDatabase.getInstance(requireContext())
+            )
+        )
 
         factory = HomeViewModelFactory(repository)
 
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
 
-        sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences(
+            getString(R.string.my_preference),
+            Context.MODE_PRIVATE
+        )
         editor = sharedPreferences.edit()
 
 
-        if(sharedPreferences.getBoolean(getString(R.string.gps_pref),false)){
+        if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
             getFreshLocation()
-        } else if(sharedPreferences.getBoolean(getString(R.string.map_pref),false)){
+        } else if (sharedPreferences.getBoolean(getString(R.string.map_pref), false)) {
 
         }
 
-        if(sharedPreferences.getBoolean(getString(R.string.celsius_pref),false)){
+        if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
             units = "metric"
-        } else if(sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref),false)){
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
             units = "imperial"
         } else {
             units = "standard"
         }
 
-        if(sharedPreferences.getBoolean(getString(R.string.arabic_pref),false)){
+        if (sharedPreferences.getBoolean(getString(R.string.arabic_pref), false)) {
             lang = "ar"
         } else {
             lang = "en"
         }
 
-        var lat = sharedPreferences.getString(getString(R.string.lat),"0.0") ?: "0.0"
-        var lon = sharedPreferences.getString(getString(R.string.lon),"0.0") ?: "0.0"
+        var lat = sharedPreferences.getString(getString(R.string.lat), "0.0") ?: "0.0"
+        var lon = sharedPreferences.getString(getString(R.string.lon), "0.0") ?: "0.0"
 
         Log.i(TAG, "onViewCreated: lat: $lat")
         Log.i(TAG, "onViewCreated: lon: $lon")
 
-        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(),units,lang)
+        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(), units, lang)
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weatherResponse ->
             Log.i(TAG, "onViewCreated: ${weatherResponse.dt}")
             weatherResponseStore = weatherResponse
@@ -132,7 +138,7 @@ class HomeFragment : Fragment() {
             binding.temp = setFormattedTemperature(weatherResponse.main.temp)
         })
 
-        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
+        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
         viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = TempAdapter(requireContext())
             tempListStore = refactorTemperatureList(forecastResponse.list)
@@ -145,7 +151,7 @@ class HomeFragment : Fragment() {
             }
         })
 
-        viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(),40,units,lang)
+        viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(), 40, units, lang)
         viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = DayAdapter(requireContext())
             Log.i(TAG, "onViewCreated: $forecastResponse")
@@ -159,27 +165,28 @@ class HomeFragment : Fragment() {
             }
         })
 
+        viewModel.combinedData.observe(viewLifecycleOwner) { (weatherResponse, forecastResponse, forecastDaysResponse) ->
+            if (weatherResponse != null && forecastResponse != null && forecastDaysResponse != null) {
+                storeHomeWeather()
+            }
+        }
+
+
+
         binding.swipeRefresh.setOnRefreshListener {
-            if(sharedPreferences.getBoolean(getString(R.string.gps_pref),false)){
+            if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
                 getFreshLocation()
-            } else if(sharedPreferences.getBoolean(getString(R.string.gps_pref),false)) {
-                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
-                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
-                viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(),40,units,lang)
+            } else if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
+                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
+                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
+                viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(), 40, units, lang)
             }
-            if(this::weatherResponseStore.isInitialized
-                && this::tempListStore.isInitialized
-                && this::dayListStore.isInitialized){
-                viewModel.storeWeatherData(weatherResponseStore,tempListStore,dayListStore,true)
-            }
+            storeHomeWeather()
             binding.swipeRefresh.isRefreshing = false
         }
 
-//        if(this::weatherResponseStore.isInitialized
-//            && this::tempListStore.isInitialized
-//            && this::dayListStore.isInitialized){
-//            viewModel.storeWeatherData(weatherResponseStore,tempListStore,dayListStore,true)
-//        }
+
+
 
     }
 
@@ -199,19 +206,28 @@ class HomeFragment : Fragment() {
                     super.onLocationResult(locationResult)
 
                     if (locationResult.locations.isNotEmpty()) {
-                        val location : Location? = locationResult.lastLocation
-                        Log.i(InitActivity.TAG, "Location updated: ${location?.latitude}, ${location?.longitude}")
+                        val location: Location? = locationResult.lastLocation
+                        Log.i(
+                            InitActivity.TAG,
+                            "Location updated: ${location?.latitude}, ${location?.longitude}"
+                        )
 
-                        val lat : String = location?.latitude.toString()
-                        val lon : String = location?.longitude.toString()
-                        editor.putString(getString(R.string.lat_pref), lat)
-                        editor.putString(requireContext().getString(R.string.lon_pref), lon)
+                        val lat: String = location?.latitude.toString()
+                        val lon: String = location?.longitude.toString()
+                        editor.putString("lat", lat)
+                        editor.putString("lon", lon)
                         editor.apply()
 
                         // Fetch updated weather data
-                        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(),units,lang)
-                        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
-                        viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(),40,units,lang)
+                        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(), units, lang)
+                        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
+                        viewModel.fetchForecastDataDays(
+                            lat.toDouble(),
+                            lon.toDouble(),
+                            40,
+                            units,
+                            lang
+                        )
                     }
                 }
             },
@@ -219,7 +235,7 @@ class HomeFragment : Fragment() {
         )
     }
 
-    fun dateConverter(dt : Long) : String{
+    fun dateConverter(dt: Long): String {
         val date = Date(dt * 1000)
         val sdf = SimpleDateFormat("EEE, dd MMM - hh:mm a")
         sdf.setTimeZone(TimeZone.getDefault())
@@ -227,7 +243,7 @@ class HomeFragment : Fragment() {
         return formattedDate
     }
 
-    fun dateConverterForSun(dt : Long) : String{
+    fun dateConverterForSun(dt: Long): String {
         val date = Date(dt * 1000)
         val sdf = SimpleDateFormat("hh:mm a")
         sdf.setTimeZone(TimeZone.getDefault())
@@ -236,26 +252,38 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun setFormattedTemperature(temperature: Double?) : String {
+    fun setFormattedTemperature(temperature: Double?): String {
         var result = ""
-        if(sharedPreferences.getBoolean(getString(R.string.celsius_pref),false)){
+        if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
             result = String.format("%.1f " + getString(R.string.celsius), temperature)
-        } else if(sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref),false)){
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
             result = String.format("%.1f " + getString(R.string.fahrenheit), temperature)
         } else {
             result = String.format("%.1f " + getString(R.string.kelvin), temperature)
         }
-         return result
+        return result
     }
 
-    fun setFormattedTemperature(minTemperature: Double?,maxTemperature: Double?) : String {
+    fun setFormattedTemperature(minTemperature: Double?, maxTemperature: Double?): String {
         var result = ""
-        if(sharedPreferences.getBoolean(getString(R.string.celsius_pref),false)){
-            result = String.format("%.1f / %.1f " + getString(R.string.celsius), maxTemperature , minTemperature)
-        } else if(sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref),false)){
-            result = String.format("%.1f / %.1f " + getString(R.string.fahrenheit), maxTemperature , minTemperature)
+        if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
+            result = String.format(
+                "%.1f / %.1f " + getString(R.string.celsius),
+                maxTemperature,
+                minTemperature
+            )
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
+            result = String.format(
+                "%.1f / %.1f " + getString(R.string.fahrenheit),
+                maxTemperature,
+                minTemperature
+            )
         } else {
-            result = String.format("%.1f / %.1f " + getString(R.string.kelvin), maxTemperature , minTemperature)
+            result = String.format(
+                "%.1f / %.1f " + getString(R.string.kelvin),
+                maxTemperature,
+                minTemperature
+            )
         }
         return result
     }
@@ -269,7 +297,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun setIcon(icon : String){
+    fun setIcon(icon: String) {
         Glide
             .with(requireContext())
             .load("https://openweathermap.org/img/wn/${icon}@2x.png")
@@ -291,13 +319,15 @@ class HomeFragment : Fragment() {
                 val minTemp = dayList.minOf { it.main.temp_min }
                 val maxTemp = dayList.maxOf { it.main.temp_max }
 
-                val temp = setFormattedTemperature(minTemp,maxTemp)
+                val temp = setFormattedTemperature(minTemp, maxTemp)
 
                 val entryAtNoon = dayList.find { it.dt_txt.contains("09:00:00") }
                 val representativeWeather = entryAtNoon?.weather?.firstOrNull()
 
-                val icon = representativeWeather?.icon ?: dayList.first().weather.firstOrNull()?.icon ?: ""
-                val description = representativeWeather?.description ?: dayList.first().weather.firstOrNull()?.description ?: ""
+                val icon =
+                    representativeWeather?.icon ?: dayList.first().weather.firstOrNull()?.icon ?: ""
+                val description = representativeWeather?.description
+                    ?: dayList.first().weather.firstOrNull()?.description ?: ""
 
                 DayWeather(day, temp, icon, description)
             }
@@ -319,13 +349,22 @@ class HomeFragment : Fragment() {
     }
 
     fun getFormattedWindSpeed(metersPerSec: Double): String {
-        if(sharedPreferences.getBoolean(getString(R.string.mile_hour_pref),false)){
+        if (sharedPreferences.getBoolean(getString(R.string.mile_hour_pref), false)) {
             val formattedSpeed = String.format("%.3f", metersPerSec * 2.23694)
             return "$formattedSpeed ${getString(R.string.mile_hour)}"
         } else {
             return "$metersPerSec ${getString(R.string.meter_sec)}"
         }
 
+    }
+
+    fun storeHomeWeather() {
+        if(this::weatherResponseStore.isInitialized
+        && this::tempListStore.isInitialized
+        && this::dayListStore.isInitialized)
+        {
+            viewModel.storeWeatherData(weatherResponseStore, tempListStore, dayListStore, true)
+        }
     }
 
 }
