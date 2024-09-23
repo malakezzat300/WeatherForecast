@@ -49,4 +49,9 @@
     <string name="are_you_sure_you_want_to_delete_this_item">"هل انت متأكد انك تريد مسح هذا العنصر؟ "</string>
     <string name="yes">نعم</string>
     <string name="no">لا</string>
+    <string name="added">تم الاضافة</string>
+    <string name="removed">"تم المسح "</string>
+    <string name="and_the_temperature_is">" و درجة الحرارة تكون"</string>
+    <string name="please_select_time_after_now">"من فضلك اختار وقت بعد الان "</string>
+    <string name="please_select_time_after_from_time">من فضلك اختار وقت بعد توقيت البداية</string>
 </resources>

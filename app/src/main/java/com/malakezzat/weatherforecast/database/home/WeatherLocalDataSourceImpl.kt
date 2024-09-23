@@ -42,4 +42,8 @@ class WeatherLocalDataSourceImpl(
     override suspend fun deleteAlert(alert: Alert) {
         alertDao.deleteAlert(alert)
     }
+
+    override suspend fun deleteAlertById(alertId: String) {
+        alertDao.deleteAlertById(alertId)
+    }
 }

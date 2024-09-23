@@ -1,25 +1,43 @@
-package com.malakezzat.weatherforecast.dialog
+package com.malakezzat.weatherforecast.alert.view
 
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.malakezzat.weatherforecast.R
+import com.malakezzat.weatherforecast.alert.worker.AlertWorker
+import com.malakezzat.weatherforecast.database.AppDatabase
+import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.DialogAlertBinding
+import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
+import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.Alert
+import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.WeatherRepository
+import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
+import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class AlertDialogFragment : DialogFragment() {
 
@@ -30,6 +48,10 @@ class AlertDialogFragment : DialogFragment() {
     private val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
     private var fromCalendar = Calendar.getInstance()
     private var toCalendar = Calendar.getInstance()
+    private lateinit var viewModel: HomeViewModel
+    private lateinit var factory: HomeViewModelFactory
+    private lateinit var repository: WeatherRepository
+    private lateinit var sharedPreferences: SharedPreferences
 
     interface AlertDialogListener {
         fun onDialogPositiveClick(alert: Alert)
@@ -47,6 +69,25 @@ class AlertDialogFragment : DialogFragment() {
         return activity?.let {
             val builder = AlertDialog.Builder(requireContext())
             _binding = DialogAlertBinding.inflate(layoutInflater)
+
+            repository = WeatherRepositoryImpl(
+                WeatherRemoteDataSourceImpl.getInstance(), WeatherLocalDataSourceImpl(
+                    AppDatabase.getInstance(requireContext())
+                )
+            )
+            factory = HomeViewModelFactory(repository)
+            viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
+            sharedPreferences = requireActivity().getSharedPreferences(
+                getString(R.string.my_preference),
+                Context.MODE_PRIVATE
+            )
+
+            val lat = sharedPreferences.getString(getString(R.string.lat), "0.0") ?: "0.0"
+            val lon = sharedPreferences.getString(getString(R.string.lon), "0.0") ?: "0.0"
+            val units = getUnits()
+            val lang = getLanguage()
+
+            viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(),40,units,lang)
 
             setDefaultDateTime()
 
@@ -95,14 +136,18 @@ class AlertDialogFragment : DialogFragment() {
     }
 
     private fun saveAlert() {
+        val message = checkWeather(fromCalendar, viewModel.currentForecastDays.value?.list ?: listOf()) ?: " "
         val newAlert = Alert(
             0,
             fromCalendar.timeInMillis,
             toCalendar.timeInMillis,
             fromCalendar.timeInMillis,
             toCalendar.timeInMillis,
-            if (binding.alarmRadioButton.isChecked) R.string.alarm else R.string.notification
-        )
+            if (binding.alarmRadioButton.isChecked) R.string.alarm else R.string.notification,
+            message,
+            " ",
+            Random.nextInt().toString())
+        newAlert.workId = scheduleNotification(requireContext(),fromCalendar.timeInMillis,newAlert)
         listener.onDialogPositiveClick(newAlert)
         dismiss()
     }
@@ -165,12 +210,14 @@ class AlertDialogFragment : DialogFragment() {
                 if (isFromTime) {
                     if (calendar.timeInMillis < System.currentTimeMillis()) {
                         calendar.timeInMillis = System.currentTimeMillis()
-                        Toast.makeText(requireContext(), "Please select Time after now", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(),
+                            getString(R.string.please_select_time_after_now), Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     if (calendar.timeInMillis <= fromCalendar.timeInMillis) {
-                        calendar.timeInMillis = fromCalendar.timeInMillis + 3600000 // Set "to" time to one hour later
-                        Toast.makeText(requireContext(), "Please select Time after From Time", Toast.LENGTH_SHORT).show()
+                        calendar.timeInMillis = fromCalendar.timeInMillis + 3600000
+                        Toast.makeText(requireContext(),
+                            getString(R.string.please_select_time_after_from_time), Toast.LENGTH_SHORT).show()
                     }
                 }
                 onDateTimeSet()
@@ -193,8 +240,83 @@ class AlertDialogFragment : DialogFragment() {
         return sdf.format(calendar.time)
     }
 
+    fun scheduleNotification(context: Context, alarmTime: Long,alert: Alert): String {
+        val currentTime = System.currentTimeMillis()
+        val delay = alarmTime - currentTime
+
+        val data = Data.Builder()
+            .putString(getString(R.string.id_worker),alert.deleteId)
+            .putString(getString(R.string.message_worker), alert.message)
+            .putInt(getString(R.string.type_worker), alert.type)
+            .build()
+        Log.i("deleteAfterWork", "scheduleNotification: id ${alert.deleteId}")
+        val notificationWork = OneTimeWorkRequestBuilder<AlertWorker>()
+            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setInputData(data)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(notificationWork)
+
+        return notificationWork.id.toString()
+    }
+
+
+    fun checkWeather(fromCalendar: Calendar, list: List<ListF>): String? {
+        val calendarTimeInSeconds = fromCalendar.timeInMillis / 1000
+        var closestIndex = -1
+        var smallestDifference = Long.MAX_VALUE
+
+        for (i in list.indices) {
+            val weatherTimeInSeconds = list[i].dt
+            val difference = kotlin.math.abs(weatherTimeInSeconds - calendarTimeInSeconds)
+
+            if (difference < smallestDifference) {
+                smallestDifference = difference
+                closestIndex = i
+            }
+        }
+
+        return if (closestIndex != -1) {
+            val temp = list[closestIndex].main.temp
+            val description = list[closestIndex].weather[0].description
+            "$description ${getString(R.string.and_the_temperature_is)} ${setFormattedTemperature(temp)}"
+        } else null
+    }
+
+    fun setFormattedTemperature(temperature: Double?): String {
+        var result = ""
+        if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
+            result = String.format("%.1f " + getString(R.string.celsius), temperature)
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
+            result = String.format("%.1f " + getString(R.string.fahrenheit), temperature)
+        } else {
+            result = String.format("%.1f " + getString(R.string.kelvin), temperature)
+        }
+        return result
+    }
+
+    private fun getUnits() : String {
+        return if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
+            "metric"
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
+            "imperial"
+        } else {
+            "standard"
+        }
+    }
+
+    private fun getLanguage() : String{
+        return if(sharedPreferences.getBoolean(getString(R.string.arabic_pref),false)){
+            "ar"
+        } else {
+            "en"
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

@@ -20,6 +20,9 @@ interface AlertDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAlert(alert: Alert)
 
+    @Query("DELETE FROM ALERTS WHERE deleteId = :alertId")
+    fun deleteAlertById(alertId: String)
+
     @Delete
     fun deleteAlert(alert: Alert)
 }

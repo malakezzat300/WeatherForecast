@@ -61,4 +61,8 @@ class WeatherRepositoryImpl(
         weatherLocalDataSource.deleteAlert(alert)
     }
 
+    override suspend fun deleteAlertById(alertId: String) {
+        weatherLocalDataSource.deleteAlertById(alertId)
+    }
+
 }

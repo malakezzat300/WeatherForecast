@@ -6,11 +6,14 @@ import androidx.room.TypeConverters
 
 @Entity(tableName = "alerts")
 data class Alert(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
     val fromTime: Long,
     val toTime: Long,
     val fromDate: Long,
     val toDate: Long,
-    val type: Int
+    val type: Int,
+    var message :String,
+    var workId : String,
+    var deleteId : String,
 )
 

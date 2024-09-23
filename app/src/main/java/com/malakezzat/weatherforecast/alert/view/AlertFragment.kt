@@ -1,6 +1,5 @@
 package com.malakezzat.weatherforecast.alert.view
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,14 +10,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkManager
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModel
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModelFactory
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentAlertBinding
-import com.malakezzat.weatherforecast.dialog.AlertDialogFragment
 import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
@@ -81,9 +79,11 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
     }
 
     override fun onDialogPositiveClick(alert: Alert) {
-        Toast.makeText(requireContext(), "Added Alert", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.added), Toast.LENGTH_SHORT).show()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.addAlert(alert)
         }
     }
+
+
 }
