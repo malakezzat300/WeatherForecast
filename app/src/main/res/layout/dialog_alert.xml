@@ -139,13 +139,13 @@
             app:layout_constraintTop_toBottomOf="@+id/from_button">
 
             <RadioButton
-                android:id="@+id/gps_radio_button"
+                android:id="@+id/alarm_radio_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/alarm" />
 
             <RadioButton
-                android:id="@+id/map_radio_button"
+                android:id="@+id/notification_radio_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -153,7 +153,7 @@
         </RadioGroup>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/ok_button"
+            android:id="@+id/save_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"

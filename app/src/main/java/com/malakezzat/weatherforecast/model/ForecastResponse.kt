@@ -1,11 +1,17 @@
 package com.malakezzat.weatherforecast.model
 
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+
 data class ForecastResponse(
+    val id: Long,
     val cod: String,
     val message: Long,
     val cnt: Long,
     val list: List<ListF>,
     val city: City,
+    val weatherResponseId: Int
 )
 
 data class ListF(

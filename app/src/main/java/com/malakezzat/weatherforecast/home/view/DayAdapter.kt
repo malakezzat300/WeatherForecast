@@ -2,7 +2,6 @@ package com.malakezzat.weatherforecast.home.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,19 +10,11 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.malakezzat.weatherforecast.ForecastDiffUtil
 import com.malakezzat.weatherforecast.ForecastDiffUtilDays
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.DayTempItemBinding
-import com.malakezzat.weatherforecast.databinding.TempHoursItemBinding
 import com.malakezzat.weatherforecast.model.DayWeather
-import com.malakezzat.weatherforecast.model.ForecastResponse
-import com.malakezzat.weatherforecast.model.ListF
 import com.squareup.picasso.Picasso
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.TimeZone
 
 class DayAdapter (val context : Context) : ListAdapter<DayWeather, DayAdapter.ViewHolder>(
     ForecastDiffUtilDays()

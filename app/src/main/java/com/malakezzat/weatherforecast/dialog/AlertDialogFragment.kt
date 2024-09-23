@@ -9,18 +9,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.malakezzat.weatherforecast.R
+import com.malakezzat.weatherforecast.databinding.DialogAlertBinding
 import com.malakezzat.weatherforecast.databinding.DialogLocationBinding
 
 class AlertDialogFragment : DialogFragment() {
 
-    private var _binding: DialogLocationBinding? = null
+    private var _binding: DialogAlertBinding? = null
     private val binding get() = _binding!!
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : Editor
 
     interface LocationDialogListener {
         fun onDialogPositiveClick(data: Map<String,Boolean>)
-        fun onDialogCancel()
     }
 
     private lateinit var listener: LocationDialogListener
@@ -32,20 +32,14 @@ class AlertDialogFragment : DialogFragment() {
             sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
             editor = sharedPreferences.edit()
 
-            _binding = DialogLocationBinding.inflate(layoutInflater)
+            _binding = DialogAlertBinding.inflate(layoutInflater)
             listener = it as? LocationDialogListener
-                ?: throw ClassCastException("$context must implement LocationDialogListener")
+                ?: throw ClassCastException("$context must implement AlertDialogListener")
 
-            binding.gpsRadioButton.text = getString(R.string.gps)
-            binding.gpsRadioButton.isChecked = true
-            binding.mapRadioButton.text = getString(R.string.map)
-            binding.notificationSwitch.isChecked = true
-
-            binding.okButton.setOnClickListener {
+            binding.saveButton.setOnClickListener {
                 val data = mapOf(
-                    getString(R.string.gps_pref) to binding.gpsRadioButton.isChecked,
-                    getString(R.string.map_pref) to binding.mapRadioButton.isChecked,
-                    getString(R.string.notification_pref) to binding.notificationSwitch.isChecked
+                    getString(R.string.alarm_pref) to binding.alarmRadioButton.isChecked,
+                    getString(R.string.notification_pref) to binding.notificationRadioButton.isChecked,
                 )
                 editor.putBoolean(getString(R.string.first_run),false)
                 editor.commit()
@@ -53,18 +47,11 @@ class AlertDialogFragment : DialogFragment() {
                 dismiss()
             }
 
-
             builder.setView(binding.root)
             builder.create()
 
 
         } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-        requireActivity().finish()
-        listener.onDialogCancel()
     }
 
     override fun onDestroyView() {

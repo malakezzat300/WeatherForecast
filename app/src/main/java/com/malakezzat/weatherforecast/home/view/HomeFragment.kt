@@ -32,6 +32,10 @@ import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.InitActivity
 import com.malakezzat.weatherforecast.R
+import com.malakezzat.weatherforecast.database.AppDatabase
+import com.malakezzat.weatherforecast.database.home.WeatherDao
+import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSource
+import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
@@ -39,6 +43,7 @@ import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.WeatherResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -60,6 +65,10 @@ class HomeFragment : Fragment() {
     private lateinit var fusedClient : FusedLocationProviderClient
     private lateinit var units : String
     private lateinit var lang : String
+    private lateinit var weatherResponseStore : WeatherResponse
+    private lateinit var tempListStore : List<ListF>
+    private lateinit var dayListStore : List<DayWeather>
+    private val isHome = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,7 +82,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        repository = WeatherRepositoryImpl(WeatherRemoteDataSourceImpl.getInstance())
+        repository = WeatherRepositoryImpl(WeatherRemoteDataSourceImpl.getInstance(),WeatherLocalDataSourceImpl(
+            AppDatabase.getInstance(requireContext())))
 
         factory = HomeViewModelFactory(repository)
 
@@ -112,6 +122,7 @@ class HomeFragment : Fragment() {
         viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(),units,lang)
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weatherResponse ->
             Log.i(TAG, "onViewCreated: ${weatherResponse.dt}")
+            weatherResponseStore = weatherResponse
             binding.weatherResponse = weatherResponse
             binding.date = dateConverter(weatherResponse.dt)
             setIcon(weatherResponse.weather[0].icon)
@@ -124,8 +135,8 @@ class HomeFragment : Fragment() {
         viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
         viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = TempAdapter(requireContext())
-
-            recyclerAdapter.submitList(refactorTemperatureList(forecastResponse.list).toMutableList())
+            tempListStore = refactorTemperatureList(forecastResponse.list)
+            recyclerAdapter.submitList(tempListStore.toMutableList())
             binding.tempRecyclerView.apply {
                 adapter = recyclerAdapter
                 layoutManager = LinearLayoutManager(requireContext()).apply {
@@ -138,8 +149,8 @@ class HomeFragment : Fragment() {
         viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = DayAdapter(requireContext())
             Log.i(TAG, "onViewCreated: $forecastResponse")
-
-            recyclerAdapter.submitList(filterUniqueDaysWithMinMax(forecastResponse.list).toMutableList())
+            dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
+            recyclerAdapter.submitList(dayListStore.toMutableList())
             binding.daysRecyclerView.apply {
                 adapter = recyclerAdapter
                 layoutManager = LinearLayoutManager(requireContext()).apply {
@@ -156,9 +167,19 @@ class HomeFragment : Fragment() {
                 viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(),units,lang)
                 viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(),40,units,lang)
             }
+            if(this::weatherResponseStore.isInitialized
+                && this::tempListStore.isInitialized
+                && this::dayListStore.isInitialized){
+                viewModel.storeWeatherData(weatherResponseStore,tempListStore,dayListStore,true)
+            }
             binding.swipeRefresh.isRefreshing = false
         }
 
+//        if(this::weatherResponseStore.isInitialized
+//            && this::tempListStore.isInitialized
+//            && this::dayListStore.isInitialized){
+//            viewModel.storeWeatherData(weatherResponseStore,tempListStore,dayListStore,true)
+//        }
 
     }
 
@@ -183,7 +204,7 @@ class HomeFragment : Fragment() {
 
                         val lat : String = location?.latitude.toString()
                         val lon : String = location?.longitude.toString()
-                        editor.putString(requireContext().getString(R.string.lat_pref), lat)
+                        editor.putString(getString(R.string.lat_pref), lat)
                         editor.putString(requireContext().getString(R.string.lon_pref), lon)
                         editor.apply()
 

@@ -72,5 +72,6 @@
     <string name="to">To</string>
     <string name="no_alerts">No Alerts</string>
     <string name="no_places">No Places</string>
+    <string name="alarm_pref">alarm</string>
 
 </resources>

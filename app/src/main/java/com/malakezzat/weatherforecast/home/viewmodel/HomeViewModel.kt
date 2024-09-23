@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.malakezzat.weatherforecast.database.home.WeatherDB
+import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherRepository
@@ -72,7 +74,11 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     }
 
 
-
-
+    fun storeWeatherData(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean) {
+        viewModelScope.launch {
+            val weatherDB = WeatherDB.mapWeatherDB(weatherResponse,tempList,dayList,isHome)
+            weatherRepository.insertWeather(weatherDB)
+        }
+    }
 
 }

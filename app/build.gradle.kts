@@ -82,6 +82,8 @@ dependencies {
     implementation ("org.osmdroid:osmdroid-android:6.1.11")
     //picasso
     implementation ("com.squareup.picasso:picasso:2.71828")
-    //swiperefreshlayout
+    //swipeRefreshLayout
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+    //workManager
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
 }
