@@ -7,15 +7,10 @@ import androidx.room.TypeConverters
 @Entity(tableName = "alerts")
 data class Alert(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val fromTime: String,
-    val toTime: String,
-    val fromDate: String,
-    val toDate: String,
-    val type: Type
+    val fromTime: Long,
+    val toTime: Long,
+    val fromDate: Long,
+    val toDate: Long,
+    val type: Int
 )
-
-enum class Type {
-    ALERT,
-    NOTIFICATION
-}
 

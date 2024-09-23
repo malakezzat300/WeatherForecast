@@ -62,7 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="date"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -122,7 +122,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="date"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textAlignment="center" />
 
             </LinearLayout>

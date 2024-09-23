@@ -4,7 +4,7 @@
     <string name="gps">نظام تحديد المواقع</string>
     <string name="map">خريطة</string>
     <string name="location">موقع</string>
-    <string name="notification">اشعارات</string>
+    <string name="notification">اشعار</string>
     <string name="ok">تأكيد</string>
     <string name="cannot_fetch_location">لا يمكننا الحصول على موقعك.</string>
     <string name="please_allow_weather_to_access_your_location">يرجى السماح للتطبيق بالوصول إلى موقعك.</string>
@@ -39,4 +39,14 @@
     <string name="wind">الرياح</string>
     <string name="pressure">الضغط</string>
     <string name="tomorrow">غداً</string>
+    <string name="alarm">منبه</string>
+    <string name="from">من</string>
+    <string name="to">الي</string>
+    <string name="no_alerts">لا يوجد تنبيهات</string>
+    <string name="no_places">لا يوجد اماكن</string>
+    <string name="delete">مسح</string>
+    <string name="confirmation">تأكيد !</string>
+    <string name="are_you_sure_you_want_to_delete_this_item">"هل انت متأكد انك تريد مسح هذا العنصر؟ "</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
 </resources>

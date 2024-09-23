@@ -72,7 +72,11 @@
     <string name="to">To</string>
     <string name="no_alerts">No Alerts</string>
     <string name="no_places">No Places</string>
-    <string name="alarm_pref">alarm</string>
     <string name="delete">Delete</string>
+    <string name="alarm_pref" translatable="false">alarm</string>
+    <string name="confirmation">Confirmation !</string>
+    <string name="are_you_sure_you_want_to_delete_this_item">Are you sure you want to delete this item?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

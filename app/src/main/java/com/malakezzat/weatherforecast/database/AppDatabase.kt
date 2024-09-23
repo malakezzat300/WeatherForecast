@@ -12,7 +12,7 @@ import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.WeatherResponse
 
-@Database(entities = [WeatherDB::class, Alert::class], version = 3)
+@Database(entities = [WeatherDB::class, Alert::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract val weatherDAO: WeatherDao
     abstract val alertDAO: AlertDao

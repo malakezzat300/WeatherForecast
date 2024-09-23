@@ -7,11 +7,23 @@
     <data>
 
         <variable
-            name="dayItem"
-            type="com.malakezzat.weatherforecast.model.DayWeather" />
+            name="alert"
+            type="com.malakezzat.weatherforecast.model.Alert" />
 
         <variable
-            name="time"
+            name="fromTime"
+            type="String" />
+
+        <variable
+            name="fromDate"
+            type="String" />
+
+        <variable
+            name="toTime"
+            type="String" />
+
+        <variable
+            name="toDate"
             type="String" />
 
     </data>
@@ -29,13 +41,13 @@
             android:layout_height="76dp"
             android:orientation="horizontal"
             android:padding="12dp"
-            android:weightSum="12">
+            android:weightSum="18">
 
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_weight="7"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:weightSum="2"
@@ -48,13 +60,14 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:textSize="14sp"
-                    android:text="@{dayItem.day}"
+                    android:textSize="16sp"
+                    android:text="@{fromTime}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/hour_icon"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="test" />
+
                 <TextView
                     android:id="@+id/from_Date_text"
                     android:layout_width="match_parent"
@@ -63,7 +76,7 @@
                     android:gravity="center"
                     android:textAlignment="center"
                     android:textSize="14sp"
-                    android:text="@{dayItem.day}"
+                    android:text="@{fromDate}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/hour_icon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +89,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_weight="7"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:weightSum="2"
@@ -89,8 +102,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:textSize="14sp"
-                    android:text="@{dayItem.day}"
+                    android:textSize="16sp"
+                    android:text="@{toTime}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/hour_icon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +117,7 @@
                     android:gravity="center"
                     android:textAlignment="center"
                     android:textSize="14sp"
-                    android:text="@{dayItem.day}"
+                    android:text="@{toDate}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/hour_icon"
                     app:layout_constraintStart_toStartOf="parent"
@@ -119,9 +132,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="5"
+                android:layout_weight="3"
                 android:gravity="center"
-                android:text="@{dayItem.temp}"
+                android:text="@{alert.type}"
                 android:textAlignment="center"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -131,10 +144,9 @@
 
         <ImageView
             android:id="@+id/alert_menu_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="22dp"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_dots"
-            android:padding="12dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             />

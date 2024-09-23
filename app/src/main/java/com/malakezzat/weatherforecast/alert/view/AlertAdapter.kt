@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
@@ -16,6 +17,9 @@ import com.malakezzat.weatherforecast.AlertDiffUtilDays
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.AlertItemBinding
 import com.malakezzat.weatherforecast.model.Alert
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AlertAdapter(val context : Context,
                    private val onDelete: (Alert) -> Unit) : ListAdapter<Alert, AlertAdapter.ViewHolder>(
@@ -31,15 +35,22 @@ class AlertAdapter(val context : Context,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val alertItem = getItem(position)
+        holder.binding.alert = alertItem
+        holder.binding.fromTime = convertTimestampToTime(alertItem.fromTime)
+        holder.binding.fromDate = convertTimestampToDate(alertItem.fromDate)
+        holder.binding.toTime = convertTimestampToTime(alertItem.toTime)
+        holder.binding.toDate = convertTimestampToDate(alertItem.toDate)
 
 
-        binding.alertMenuButton.setOnClickListener { view ->
-            val popupMenu = PopupMenu(view.context, binding.alertMenuButton)
+        holder.binding.alertMenuButton.setOnClickListener { view ->
+            val popupMenu = PopupMenu(view.context, holder.binding.alertMenuButton)
             popupMenu.inflate(R.menu.options_menu)
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.delete_item -> {
-                        onDelete(alertItem)
+                        showConfirmationDialog(view.context) {
+                            onDelete(alertItem) 
+                        }
                         true
                     }
                     else -> false
@@ -47,10 +58,31 @@ class AlertAdapter(val context : Context,
             }
             popupMenu.show()
         }
-
     }
 
     class ViewHolder(val binding: AlertItemBinding) : RecyclerView.ViewHolder(binding.root)
 
+    fun convertTimestampToTime(timestamp: Long): String {
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        return sdf.format(Date(timestamp))
+    }
 
+    fun convertTimestampToDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("dd MMM,yyyy", Locale.getDefault())
+        return sdf.format(Date(timestamp))
+    }
+
+
+    private fun showConfirmationDialog(context: Context, onConfirm: () -> Unit) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(context.getString(R.string.confirmation))
+            .setMessage(context.getString(R.string.are_you_sure_you_want_to_delete_this_item))
+            .setPositiveButton(context.getString(R.string.yes)) { _, _ ->
+                onConfirm() // Call the onConfirm lambda when "Yes" is clicked
+            }
+            .setNegativeButton(context.getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss() // Dismiss the dialog when "No" is clicked
+            }
+        builder.create().show()
+    }
 }
