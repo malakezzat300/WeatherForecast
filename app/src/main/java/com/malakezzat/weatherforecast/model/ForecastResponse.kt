@@ -43,3 +43,9 @@ data class DayWeather(
     val icon: String,
     val description: String
 )
+
+data class TempWeather(
+    var day: Long,
+    val icon: String,
+    val tempV2: String,
+)

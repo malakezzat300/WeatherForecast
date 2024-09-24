@@ -2,9 +2,11 @@ package com.malakezzat.weatherforecast.home.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.location.Location
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -15,6 +17,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,10 +27,12 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.malakezzat.weatherforecast.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.InitActivity
 import com.malakezzat.weatherforecast.R
+import com.malakezzat.weatherforecast.ReceiverInterface
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
@@ -36,13 +41,17 @@ import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment() , ReceiverInterface {
 
     private val TAG: String = "HomeFragment"
     private lateinit var viewModel: HomeViewModel
@@ -58,6 +67,7 @@ class HomeFragment : Fragment() {
     private lateinit var tempListStore: List<ListF>
     private lateinit var dayListStore: List<DayWeather>
     private val isHome = true
+    private lateinit var connectionBroadcastReceiver: ConnectionBroadcastReceiver
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +80,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        connectionBroadcastReceiver = ConnectionBroadcastReceiver()
 
         repository = WeatherRepositoryImpl(
             WeatherRemoteDataSourceImpl.getInstance(), WeatherLocalDataSourceImpl(
@@ -131,7 +143,7 @@ class HomeFragment : Fragment() {
         viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = TempAdapter(requireContext())
             tempListStore = refactorTemperatureList(forecastResponse.list)
-            recyclerAdapter.submitList(tempListStore.toMutableList())
+            recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
             binding.tempRecyclerView.apply {
                 adapter = recyclerAdapter
                 layoutManager = LinearLayoutManager(requireContext()).apply {
@@ -299,9 +311,10 @@ class HomeFragment : Fragment() {
         val today = getCurrentDate()
 
         val groupedByDay = listF.groupBy { item -> item.dt_txt.substring(0, 10) }
+        val firstDayKey = groupedByDay.keys.firstOrNull()
 
         return groupedByDay
-            .filterKeys { it > today }
+            .filterKeys { it > today && it != firstDayKey  }
             .map { (date, dayList) ->
                 val day = convertToDayOfWeek(dayList.first().dt_txt)
 
@@ -320,6 +333,16 @@ class HomeFragment : Fragment() {
 
                 DayWeather(day, temp, icon, description)
             }
+    }
+
+    fun convertListFToTempWeatherList(listFList: List<ListF>): List<TempWeather> {
+        return listFList.map { listF ->
+            TempWeather(
+                day = listF.dt,
+                icon = listF.weather.firstOrNull()?.icon ?: "",
+                tempV2 = listF.main.tempV2
+            )
+        }
     }
 
     fun convertToDayOfWeek(dateString: String): String {
@@ -355,5 +378,99 @@ class HomeFragment : Fragment() {
             viewModel.storeWeatherData(weatherResponseStore, tempListStore, dayListStore, true)
         }
     }
+
+    override fun loadFromNetwork() {
+        val lat = sharedPreferences.getString(getString(R.string.lat), "0.0")?.toDouble() ?: 0.0
+        val lon = sharedPreferences.getString(getString(R.string.lon), "0.0")?.toDouble() ?: 0.0
+
+        viewModel.fetchWeatherData(lat, lon, units, lang)
+        viewModel.currentWeather.observe(viewLifecycleOwner) { weatherResponse ->
+            if (weatherResponse != null) {
+                Log.i(TAG, "loadFromNetwork: Weather data fetched successfully.")
+                weatherResponseStore = weatherResponse
+                binding.weatherResponse = weatherResponse
+                binding.date = dateConverter(weatherResponse.dt)
+                setIcon(weatherResponse.weather[0].icon)
+                binding.sunset = dateConverterForSun(weatherResponse.sys.sunset)
+                binding.sunrise = dateConverterForSun(weatherResponse.sys.sunrise)
+                binding.windSpeed = getFormattedWindSpeed(weatherResponse.wind.speed)
+                binding.temp = setFormattedTemperature(weatherResponse.main.temp)
+            } else {
+                Log.e(TAG, "loadFromNetwork: Weather data fetch failed.")
+            }
+        }
+
+        viewModel.fetchForecastData(lat, lon, units, lang)
+        viewModel.currentForecast.observe(viewLifecycleOwner) { forecastResponse ->
+            if (forecastResponse != null) {
+                val recyclerAdapter = TempAdapter(requireContext())
+                tempListStore = refactorTemperatureList(forecastResponse.list)
+                recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
+                binding.tempRecyclerView.adapter = recyclerAdapter
+            }
+        }
+
+        viewModel.fetchForecastDataDays(lat, lon, 40, units, lang)
+        viewModel.currentForecastDays.observe(viewLifecycleOwner) { forecastResponse ->
+            if (forecastResponse != null) {
+                val recyclerAdapter = DayAdapter(requireContext())
+                dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
+                recyclerAdapter.submitList(dayListStore.toMutableList())
+                binding.daysRecyclerView.adapter = recyclerAdapter
+            }
+        }
+    }
+
+    override fun loadFromDataBase() {
+        Log.i(TAG, "loadFromDataBase: no internet")
+        lifecycleScope.launch {
+            val weatherData = viewModel.getStoredWeatherData()
+            if (weatherData != null) {
+                Log.i(TAG, "loadFromDataBase: Weather data loaded from database successfully.")
+                binding.cityName.text = weatherData.name
+                binding.date = dateConverter(weatherData.dt)
+                binding.weatherState.text = weatherData.description
+                setIcon(weatherData.icon)
+
+                val temperatureDataList = weatherData.getTemperatureData()
+                val recyclerAdapterTemp = TempAdapter(requireContext())
+                recyclerAdapterTemp.submitList(temperatureDataList.toMutableList())
+                binding.tempRecyclerView.adapter = recyclerAdapterTemp
+
+                val dailyDataList = weatherData.getDailyData()
+                val recyclerAdapterDays = DayAdapter(requireContext())
+                recyclerAdapterDays.submitList(dailyDataList.toMutableList())
+                binding.daysRecyclerView.apply {
+                    adapter = recyclerAdapterDays
+                    layoutManager = LinearLayoutManager(requireContext()).apply {
+                        orientation = RecyclerView.VERTICAL
+                    }
+                }
+
+                binding.cloudText.text = weatherData.clouds.toString()
+                binding.humidityText.text = weatherData.humidity.toString()
+                binding.pressureText.text = weatherData.pressure.toString()
+                binding.sunset = dateConverterForSun(weatherData.sunset)
+                binding.sunrise = dateConverterForSun(weatherData.sunrise)
+                binding.windSpeed = getFormattedWindSpeed(weatherData.wind)
+                binding.temp = setFormattedTemperature(weatherData.temp)
+            } else {
+                Log.e(TAG, "loadFromDataBase: No weather data found in database.")
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        connectionBroadcastReceiver = ConnectionBroadcastReceiver(this)
+        val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        requireContext().registerReceiver(connectionBroadcastReceiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(connectionBroadcastReceiver)
+    }
+
 
 }

@@ -12,6 +12,8 @@ import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherResponse
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
@@ -92,5 +94,10 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
             weatherRepository.insertWeather(weatherDB)
         }
     }
+
+    suspend fun getStoredWeatherData(): WeatherDB? {
+        return weatherRepository.getAllStoredWeather().firstOrNull()?.firstOrNull()
+    }
+
 
 }

@@ -5,7 +5,7 @@
 
         <variable
             name="tempItem"
-            type="com.malakezzat.weatherforecast.model.ListF" />
+            type="com.malakezzat.weatherforecast.model.TempWeather" />
 
         <variable
             name="time"
@@ -40,7 +40,7 @@
 
             <ImageView
                 android:id="@+id/hour_icon"
-                icon="@{tempItem.weather.get(0).icon}"
+                icon="@{tempItem.icon}"
                 myError="@{@drawable/ic_launcher_foreground}"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -53,7 +53,7 @@
                 android:id="@+id/temp_text"
                 android:layout_width="62dp"
                 android:layout_height="wrap_content"
-                android:text="@{tempItem.main.tempV2}"
+                android:text="@{tempItem.tempV2}"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

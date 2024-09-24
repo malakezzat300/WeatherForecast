@@ -7,18 +7,15 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Toast
 
-class ConnectionBroadcastReceiver : BroadcastReceiver() {
+class ConnectionBroadcastReceiver(private val fragment: ReceiverInterface) : BroadcastReceiver() {
 
     var hasConnection : Boolean = false
-    lateinit var receiverInterface : ReceiverInterface
     override fun onReceive(context: Context, intent: Intent?) {
-        receiverInterface = context as ReceiverInterface
         if (isConnected(context)) {
-            receiverInterface.loadFromNetwork()
-            Toast.makeText(context, "has internet", Toast.LENGTH_SHORT).show()
+            fragment.loadFromNetwork()
         } else {
-            Toast.makeText(context, "has no internet", Toast.LENGTH_SHORT).show()
-            receiverInterface.loadFromDataBase()
+            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            fragment.loadFromDataBase()
         }
     }
 

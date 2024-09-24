@@ -16,13 +16,14 @@ import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.TempHoursItemBinding
 import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
-class TempAdapter (val context : Context) : ListAdapter<ListF, TempAdapter.ViewHolder>(
+class TempAdapter (val context : Context) : ListAdapter<TempWeather, TempAdapter.ViewHolder>(
     ForecastDiffUtil()
 ){
 
@@ -35,7 +36,7 @@ class TempAdapter (val context : Context) : ListAdapter<ListF, TempAdapter.ViewH
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         binding.tempItem = getItem(position)
-        binding.time = dateConverterForTemps(getItem(position).dt)
+        binding.time = dateConverterForTemps(getItem(position).day)
     }
 
     class ViewHolder(val binding: TempHoursItemBinding) : RecyclerView.ViewHolder(binding.root)

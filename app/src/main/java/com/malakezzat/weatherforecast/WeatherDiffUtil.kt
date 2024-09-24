@@ -4,13 +4,14 @@ import androidx.recyclerview.widget.DiffUtil
 import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
 
-class ForecastDiffUtil : DiffUtil.ItemCallback<ListF>() {
-    override fun areItemsTheSame(oldItem: ListF, newItem: ListF): Boolean {
-        return oldItem.main == newItem.main
+class ForecastDiffUtil : DiffUtil.ItemCallback<TempWeather>() {
+    override fun areItemsTheSame(oldItem: TempWeather, newItem: TempWeather): Boolean {
+        return oldItem.day == newItem.day
     }
-    override fun areContentsTheSame(oldItem: ListF, newItem: ListF): Boolean {
+    override fun areContentsTheSame(oldItem: TempWeather, newItem: TempWeather): Boolean {
         return oldItem == newItem
     }
 

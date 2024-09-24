@@ -88,4 +88,5 @@
     <string name="id_worker" translatable="false">id</string>
     <string name="please_select_time_after_now">Please select Time after now</string>
     <string name="please_select_time_after_from_time">Please select Time after Start Time</string>
+    <string name="no_internet">No internet</string>
 </resources>

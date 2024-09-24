@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
+import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
 
 @Entity(tableName = "weather_response")
@@ -65,12 +66,28 @@ data class WeatherDB (
     val tempD4: String,
     val iconD4: String,
     val descriptionD4: String,
-    var dayD5: String,
-    val tempD5: String,
-    val iconD5: String,
-    val descriptionD5: String
 
 ){
+    fun getTemperatureData(): List<TempWeather> {
+        return listOf(
+            TempWeather(dt1, icon1, tempV21),
+            TempWeather(dt2, icon2, tempV22),
+            TempWeather(dt3, icon3, tempV23),
+            TempWeather(dt4, icon4, tempV24),
+            TempWeather(dt5, icon5, tempV25),
+            TempWeather(dt6, icon6, tempV26),
+            TempWeather(dt7, icon7, tempV27)
+        )
+    }
+
+    fun getDailyData(): List<DayWeather> {
+        return listOf(
+            DayWeather(dayD1, tempD1, iconD1, descriptionD1),
+            DayWeather(dayD2, tempD2, iconD2, descriptionD2),
+            DayWeather(dayD3, tempD3, iconD3, descriptionD3),
+            DayWeather(dayD4, tempD4, iconD4, descriptionD4)
+        )
+    }
     companion object {
         fun mapWeatherDB(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean): WeatherDB {
             return WeatherDB(
@@ -127,12 +144,10 @@ data class WeatherDB (
                 dayD4 = dayList[3].day,
                 tempD4 = dayList[3].temp,
                 iconD4 = dayList[3].icon,
-                descriptionD4 = dayList[3].description,
-                dayD5 = dayList[4].day,
-                tempD5 = dayList[4].temp,
-                iconD5 = dayList[4].icon,
-                descriptionD5 = dayList[4].description,
+                descriptionD4 = dayList[3].description
             )
+
         }
+
     }
 }
