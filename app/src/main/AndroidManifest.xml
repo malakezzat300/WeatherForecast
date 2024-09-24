@@ -25,13 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherForecast"
         tools:targetApi="31">
-        <activity
-            android:name=".alert.view.AlarmOverlayActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
-
         <service
             android:name=".alert.view.AlarmService"
             android:enabled="true"

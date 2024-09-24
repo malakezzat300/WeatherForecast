@@ -6,79 +6,89 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import com.malakezzat.weatherforecast.R
+import com.malakezzat.weatherforecast.databinding.AlarmLayoutBinding
+import org.w3c.dom.Text
 
 class AlarmService : Service() {
 
+    private lateinit var windowManager: WindowManager
+    private lateinit var overlayView: View
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var binding : AlarmLayoutBinding
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         createNotificationChannel()
-
-        // Start the overlay activity
-        val overlayIntent = Intent(this, AlarmOverlayActivity::class.java)
-        overlayIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(overlayIntent)
 
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound)
         mediaPlayer.isLooping = true
         mediaPlayer.start()
 
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.alarm_layout,null, false)
+        overlayView = binding.root
+
+        val layoutParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+            PixelFormat.TRANSLUCENT
+        )
+
+        layoutParams.y = 8
+        layoutParams.gravity = Gravity.TOP
+
+        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        windowManager.addView(overlayView, layoutParams)
+
+        binding.title.text = getString(R.string.app_name)
+        binding.message.text = intent?.getStringExtra(getString(R.string.message_worker))
+        binding.imageView.setImageResource(R.drawable.ic_cloud_alarm)
+
+        val dismissButton: Button = overlayView.findViewById(R.id.dismiss_button)
+        dismissButton.setOnClickListener {
+            stopSelf()
+        }
+
         return START_STICKY
-
-//        createNotificationChannel()
-//        val notification = createNotification()
-//
-//        startForeground(1, notification)
-//
-//        mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound)
-//        mediaPlayer.isLooping = true
-//        mediaPlayer.start()
-//
-//        return START_STICKY
     }
-
-    private fun createNotification(): Notification {
-        val dismissIntent = Intent(this, AlarmReceiver::class.java)
-        dismissIntent.action = "ACTION_DISMISS_ALARM" // Custom action to dismiss the alarm
-        val dismissPendingIntent = PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-        return Notification.Builder(this, "alarm_channel_id")
-            .setContentTitle("Alarm!")
-            .setContentText("Press the button to dismiss.")
-            .setSmallIcon(R.drawable.ic_alert)
-            .addAction(Notification.Action.Builder(R.drawable.ic_add, "Dismiss", dismissPendingIntent).build())
-            .setOngoing(true)
-            .setPriority(Notification.PRIORITY_MAX)
-            .build()
-    }
-
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "alarm_channel_id",
-                "Alarm Channel",
-                NotificationManager.IMPORTANCE_MAX
-            ).apply {
-                description = "Channel for alarm notifications"
-            }
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            "alarm_channel_id",
+            "Alarm Channel",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Channel for alarm notifications"
+        }
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
+        if (::windowManager.isInitialized && ::overlayView.isInitialized) {
+            windowManager.removeView(overlayView)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.stop()
-        mediaPlayer.release()
     }
 }

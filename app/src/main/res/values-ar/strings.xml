@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Weather Forecast</string>
+    <string name="app_name">توقعات الطقس</string>
     <string name="gps">نظام تحديد المواقع</string>
     <string name="map">خريطة</string>
     <string name="location">موقع</string>
@@ -51,7 +51,7 @@
     <string name="no">لا</string>
     <string name="added">تم الاضافة</string>
     <string name="removed">"تم المسح "</string>
-    <string name="and_the_temperature_is">" و درجة الحرارة تكون"</string>
+    <string name="and_the_temperature_is">"و درجة الحرارة تكون"</string>
     <string name="please_select_time_after_now">"من فضلك اختار وقت بعد الان "</string>
     <string name="please_select_time_after_from_time">من فضلك اختار وقت بعد توقيت البداية</string>
 </resources>

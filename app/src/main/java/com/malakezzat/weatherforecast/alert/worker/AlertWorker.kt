@@ -20,6 +20,7 @@ import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 class AlertWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
 
     val context: Context = appContext
+    lateinit var message : String
 
     private lateinit var repository: WeatherRepository
 
@@ -32,7 +33,7 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
 
             val id = inputData.getString(context.getString(R.string.id_worker)).toString()
             Log.i("deleteAfterWork", "doWork: id $id")
-            val message = inputData.getString(context.getString(R.string.message_worker)).toString()
+            message = inputData.getString(context.getString(R.string.message_worker)).toString()
             val type = inputData.getInt(context.getString(R.string.type_worker),0)
             sendNotification(message,type)
             repository.deleteAlertById(id)
@@ -61,6 +62,7 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
             notificationManager.notify(1, notification)
         } else {
             val intent = Intent(applicationContext, AlarmService::class.java)
+            intent.putExtra(context.getString(R.string.message_worker),message)
             context.startService(intent)
         }
 
