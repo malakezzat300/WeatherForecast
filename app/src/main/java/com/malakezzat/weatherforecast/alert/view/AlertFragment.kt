@@ -10,12 +10,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModel
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModelFactory
 import com.malakezzat.weatherforecast.database.AppDatabase
-import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
+import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentAlertBinding
 import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.WeatherRepository

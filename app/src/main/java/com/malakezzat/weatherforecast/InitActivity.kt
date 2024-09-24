@@ -7,14 +7,17 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.malakezzat.weatherforecast.databinding.ActivityInitBinding
@@ -31,6 +34,7 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
     lateinit var binding: ActivityInitBinding
     private lateinit var fusedClient : FusedLocationProviderClient
     private val LOCATION_PERMISSION : Int = 1001
+    private val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : Editor
 
@@ -116,7 +120,11 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
             supportFragmentManager.beginTransaction()
                 .add(android.R.id.content, OsmMapFragment()).commit()
         }
-
+        if(notification == true){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestNotificationPermission()
+            }
+        }
     }
 
     override fun onDialogCancel() {
@@ -189,6 +197,9 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
         finish()
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestNotificationPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
+    }
 
 }

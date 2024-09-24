@@ -1,36 +1,21 @@
 package com.malakezzat.weatherforecast.alert.worker
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.work.CoroutineWorker
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.android.gms.location.Priority
 import com.malakezzat.weatherforecast.R
-import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModel
-import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModelFactory
+import com.malakezzat.weatherforecast.alert.view.AlarmService
 import com.malakezzat.weatherforecast.database.AppDatabase
-import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
-import com.malakezzat.weatherforecast.databinding.FragmentAlertBinding
-import com.malakezzat.weatherforecast.model.Alert
+import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 class AlertWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
 
@@ -65,16 +50,21 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
             NotificationChannel(channelId, context.getString(R.string.channel), NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
 
+        if(type == R.string.notification) {
+            val notification = NotificationCompat.Builder(context, channelId)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_cloud)
+                .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_MAX)
+                .build()
+            notificationManager.notify(1, notification)
+        } else {
+            val intent = Intent(applicationContext, AlarmService::class.java)
+            context.startService(intent)
+        }
 
-        val notification = NotificationCompat.Builder(context, channelId)
-            .setContentTitle(context.getString(R.string.app_name))
-            .setContentText(message)
-            .setSmallIcon(R.drawable.ic_alert)
-            .setAutoCancel(true)
-            //.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .build()
 
-        notificationManager.notify(1, notification)
     }
 
 

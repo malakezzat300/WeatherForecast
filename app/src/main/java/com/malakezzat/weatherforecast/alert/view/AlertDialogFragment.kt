@@ -25,7 +25,7 @@ import androidx.work.WorkManager
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.worker.AlertWorker
 import com.malakezzat.weatherforecast.database.AppDatabase
-import com.malakezzat.weatherforecast.database.home.WeatherLocalDataSourceImpl
+import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.DialogAlertBinding
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory

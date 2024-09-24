@@ -1,6 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
-import com.malakezzat.weatherforecast.database.home.WeatherDB
+import com.malakezzat.weatherforecast.database.WeatherDB
 import kotlinx.coroutines.flow.Flow
 
 
