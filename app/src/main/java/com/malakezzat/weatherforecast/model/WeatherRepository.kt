@@ -1,5 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
+import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.database.WeatherDB
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +27,9 @@ interface WeatherRepository {
     suspend fun insertAlert(alert: Alert)
     suspend fun deleteAlert(alert: Alert)
     suspend fun deleteAlertById(alertId: String)
+
+    suspend fun getFavoriteData(): Flow<List<FavoriteDB>>
+    suspend fun insertFavorite(favoriteDB: FavoriteDB)
+    suspend fun deleteFavorite(favoriteDB: FavoriteDB)
+    suspend fun deleteFavoriteById(favoriteId: String)
 }

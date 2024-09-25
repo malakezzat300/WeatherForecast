@@ -9,6 +9,7 @@ class WeatherLocalDataSourceImpl(
 
     private var weatherDao: WeatherDao = appDatabase.weatherDAO
     private var alertDao: AlertDao = appDatabase.alertDAO
+    private var favoriteDao: FavoriteDao = appDatabase.favoriteDao
 
     override suspend fun getStoredWeather(): Flow<List<WeatherDB>> {
         return weatherDao.getStoredWeather()
@@ -40,5 +41,21 @@ class WeatherLocalDataSourceImpl(
 
     override suspend fun deleteAlertById(alertId: String) {
         alertDao.deleteAlertById(alertId)
+    }
+
+    override suspend fun getFavoriteData(): Flow<List<FavoriteDB>> {
+        return favoriteDao.getFavoriteData()
+    }
+
+    override suspend fun insertFavorite(favoriteDB: FavoriteDB) {
+        favoriteDao.insertFavorite(favoriteDB)
+    }
+
+    override suspend fun deleteFavorite(favoriteDB: FavoriteDB) {
+        favoriteDao.deleteFavorite(favoriteDB)
+    }
+
+    override suspend fun deleteFavoriteById(favoriteId: String) {
+        favoriteDao.deleteFavoriteById(favoriteId)
     }
 }

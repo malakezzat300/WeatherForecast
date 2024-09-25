@@ -89,4 +89,6 @@
     <string name="please_select_time_after_now">Please select Time after now</string>
     <string name="please_select_time_after_from_time">Please select Time after Start Time</string>
     <string name="no_internet">No internet</string>
+    <string name="add">Add</string>
+    <string name="saved">Saved</string>
 </resources>

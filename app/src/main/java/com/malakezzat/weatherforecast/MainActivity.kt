@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.malakezzat.weatherforecast.alert.view.AlertFragment
@@ -102,6 +103,9 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else if(currentFragmentName != R.string.home){
+            replaceFragment(HomeFragment(), getString(R.string.home))
+            currentFragmentName = R.string.home
         } else {
             super.onBackPressed()
         }

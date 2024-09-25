@@ -23,7 +23,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-class OsmMapFragment : Fragment(R.layout.fragment_maps) {
+class OsmMapFragment(private val isHome : Boolean ) : Fragment(R.layout.fragment_maps) {
     companion object {
         const val TAG = "OsmMapFragment"
     }
@@ -54,7 +54,6 @@ class OsmMapFragment : Fragment(R.layout.fragment_maps) {
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
 
-        // Set up a listener for map interactions
         mapView.setOnTouchListener { _, event ->
             handleMapTouch(event)
         }
@@ -79,7 +78,7 @@ class OsmMapFragment : Fragment(R.layout.fragment_maps) {
                     val longitude = geoPoint.longitude
 
                     addMarkerAtLocation(latitude, longitude)
-                    val bottomSheet = MarkerBottomSheet(latitude, longitude)
+                    val bottomSheet = MarkerBottomSheet(latitude, longitude,isHome)
                     bottomSheet.show(parentFragmentManager, "MarkerBottomSheet")
 
                     Log.d(TAG, "Tapped location: Latitude: $latitude, Longitude: $longitude")
@@ -113,6 +112,8 @@ class OsmMapFragment : Fragment(R.layout.fragment_maps) {
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.finish()
+        if(isHome) {
+            activity?.finish()
+        }
     }
 }

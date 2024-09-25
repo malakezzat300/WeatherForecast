@@ -11,6 +11,8 @@ import com.malakezzat.weatherforecast.model.WeatherResponse
 data class WeatherDB (
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val lon: Double,
+    val lat: Double,
     val description: String,
     val icon: String,
     var temp: Double,
@@ -92,6 +94,8 @@ data class WeatherDB (
         fun mapWeatherDB(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean): WeatherDB {
             return WeatherDB(
                 id = if (isHome) 1 else 0,
+                lat = weatherResponse.coord.lat,
+                lon = weatherResponse.coord.lon,
                 description = weatherResponse.weather[0].description,
                 icon = weatherResponse.weather[0].icon,
                 temp = weatherResponse.main.temp,

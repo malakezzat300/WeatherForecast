@@ -118,7 +118,7 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
             }
         } else if(map == true){
             supportFragmentManager.beginTransaction()
-                .add(android.R.id.content, OsmMapFragment()).commit()
+                .add(android.R.id.content, OsmMapFragment(true)).commit()
         }
         if(notification == true){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {

@@ -1,5 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
+import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSource
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSource
@@ -63,6 +64,22 @@ class WeatherRepositoryImpl(
 
     override suspend fun deleteAlertById(alertId: String) {
         weatherLocalDataSource.deleteAlertById(alertId)
+    }
+
+    override suspend fun getFavoriteData(): Flow<List<FavoriteDB>> {
+        return weatherLocalDataSource.getFavoriteData()
+    }
+
+    override suspend fun insertFavorite(favoriteDB: FavoriteDB) {
+        weatherLocalDataSource.insertFavorite(favoriteDB)
+    }
+
+    override suspend fun deleteFavorite(favoriteDB: FavoriteDB) {
+        weatherLocalDataSource.deleteFavorite(favoriteDB)
+    }
+
+    override suspend fun deleteFavoriteById(favoriteId: String) {
+        weatherLocalDataSource.deleteFavoriteById(favoriteId)
     }
 
 }

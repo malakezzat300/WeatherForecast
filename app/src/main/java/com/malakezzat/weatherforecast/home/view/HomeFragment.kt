@@ -81,8 +81,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        connectionBroadcastReceiver = ConnectionBroadcastReceiver()
-
         repository = WeatherRepositoryImpl(
             WeatherRemoteDataSourceImpl.getInstance(), WeatherLocalDataSourceImpl(
                 AppDatabase.getInstance(requireContext())
@@ -447,9 +445,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                     }
                 }
 
-                binding.cloudText.text = weatherData.clouds.toString()
-                binding.humidityText.text = weatherData.humidity.toString()
-                binding.pressureText.text = weatherData.pressure.toString()
+                binding.cloudText.text = weatherData.clouds.toString() + getString(R.string.percentage)
+                binding.humidityText.text = weatherData.humidity.toString() + getString(R.string.percentage)
+                binding.pressureText.text = weatherData.pressure.toString() + getString(R.string.hpa)
                 binding.sunset = dateConverterForSun(weatherData.sunset)
                 binding.sunrise = dateConverterForSun(weatherData.sunrise)
                 binding.windSpeed = getFormattedWindSpeed(weatherData.wind)

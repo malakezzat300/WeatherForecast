@@ -99,7 +99,7 @@ class SettingsFragment : Fragment() {
                 }
                 R.id.map_radio_button -> {
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .add(android.R.id.content, OsmMapFragment()).commit()
+                        .add(android.R.id.content, OsmMapFragment(true)).commit()
                     editor.putBoolean(getString(R.string.gps_pref),false)
                     editor.putBoolean(getString(R.string.map_pref),true)
                     editor.commit()

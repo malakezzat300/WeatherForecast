@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.malakezzat.weatherforecast.model.Alert
 
-@Database(entities = [WeatherDB::class, Alert::class], version = 9)
+@Database(entities = [WeatherDB::class, Alert::class, FavoriteDB::class], version = 10)
 abstract class AppDatabase : RoomDatabase() {
     abstract val weatherDAO: WeatherDao
+    abstract val favoriteDao: FavoriteDao
     abstract val alertDAO: AlertDao
 
     companion object {
