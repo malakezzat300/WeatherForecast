@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -19,8 +18,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import com.malakezzat.weatherforecast.InitActivity
-import com.malakezzat.weatherforecast.InitActivity.Companion.TAG
+import com.malakezzat.weatherforecast.init.InitActivity.Companion.TAG
 import com.malakezzat.weatherforecast.MainActivity
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.FragmentSettingsBinding

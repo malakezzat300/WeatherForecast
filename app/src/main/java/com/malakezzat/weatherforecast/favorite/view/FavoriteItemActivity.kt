@@ -1,14 +1,11 @@
 package com.malakezzat.weatherforecast.favorite.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
-import android.location.Location
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,16 +18,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.malakezzat.weatherforecast.ConnectionBroadcastReceiver
-import com.malakezzat.weatherforecast.InitActivity
+import com.malakezzat.weatherforecast.connection.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.R
-import com.malakezzat.weatherforecast.ReceiverInterface
+import com.malakezzat.weatherforecast.connection.ReceiverInterface
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
@@ -38,8 +28,6 @@ import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModel
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModelFactory
 import com.malakezzat.weatherforecast.home.view.DayAdapter
 import com.malakezzat.weatherforecast.home.view.TempAdapter
-import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
-import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.TempWeather
@@ -52,7 +40,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.random.Random
 
 class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,val lang :String,val id : String)
     : Fragment() , ReceiverInterface {

@@ -32,7 +32,7 @@
             android:foregroundServiceType="mediaPlayback" />
 
         <activity
-            android:name=".InitActivity"
+            android:name=".init.InitActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,7 +46,7 @@
 
         <receiver android:name=".alert.view.AlarmReceiver" />
         <receiver
-            android:name=".ConnectionBroadcastReceiver"
+            android:name=".connection.ConnectionBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

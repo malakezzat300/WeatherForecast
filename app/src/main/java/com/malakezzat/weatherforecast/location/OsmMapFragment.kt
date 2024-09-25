@@ -1,21 +1,14 @@
 package com.malakezzat.weatherforecast.location
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
-import androidx.core.app.ActivityCompat.finishAffinity
-import com.malakezzat.weatherforecast.InitActivity
-import com.malakezzat.weatherforecast.InitActivity.Companion
-import com.malakezzat.weatherforecast.MainActivity
 
 import com.malakezzat.weatherforecast.R
 import org.osmdroid.config.Configuration

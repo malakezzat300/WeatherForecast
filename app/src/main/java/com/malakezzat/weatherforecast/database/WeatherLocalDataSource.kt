@@ -10,6 +10,7 @@ interface WeatherLocalDataSource {
     suspend fun findWeatherById(weatherId: Int): WeatherDB?
     suspend fun insertWeather(weatherDB: WeatherDB)
     suspend fun deleteWeather(weatherDB: WeatherDB)
+    suspend fun deleteWeatherById(weatherId: Int)
 
     suspend fun getAllAlerts(): Flow<List<Alert>>
     suspend fun insertAlert(alert: Alert)

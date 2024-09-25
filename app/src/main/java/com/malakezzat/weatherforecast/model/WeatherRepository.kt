@@ -21,6 +21,7 @@ interface WeatherRepository {
     suspend fun deleteWeather(weatherDB: WeatherDB)
     suspend fun getAllStoredWeather(): Flow<List<WeatherDB>>
     suspend fun findWeatherById(weatherId: Int): WeatherDB?
+    suspend fun deleteWeatherById(weatherId: Int)
 
 
     suspend fun getAllAlerts(): Flow<List<Alert>>

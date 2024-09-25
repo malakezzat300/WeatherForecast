@@ -2,9 +2,7 @@ package com.malakezzat.weatherforecast.favorite.view
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.net.ConnectivityManager
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,34 +10,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.malakezzat.weatherforecast.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.R
-import com.malakezzat.weatherforecast.alert.view.AlertAdapter
-import com.malakezzat.weatherforecast.alert.view.AlertDialogFragment
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentFavoriteBinding
-import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
-import com.malakezzat.weatherforecast.dialog.FavoriteDialogFragment
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModel
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModelFactory
-import com.malakezzat.weatherforecast.home.view.HomeFragment
-import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
-import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
-import com.malakezzat.weatherforecast.location.MarkerBottomSheet
-import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.model.WeatherResponse
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListener {
@@ -89,7 +76,7 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
                 val recyclerAdapter = FavoriteAdapter(requireContext(),
                     { item ->
                         viewModel.removeFavorite(item)
-                        //TODO delete weather data
+                        viewModel.removeFavoriteById(item.deleteId.toInt())
                     },
                     { lat, lon , id ->
                         handleLocationClick(lat, lon,id)
@@ -105,8 +92,13 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
 
 
         binding.addFavButton.setOnClickListener{
+            binding.progressBar.visibility = View.VISIBLE
             if (isNetworkAvailable()) {
-                showFavoriteDialog()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(600)
+                    showFavoriteDialog()
+                    binding.progressBar.visibility = View.GONE
+                }
             } else {
                 Toast.makeText(requireContext(),
                     getString(R.string.please_connect_to_internet_first_and_try_again_later), Toast.LENGTH_SHORT).show()
@@ -121,10 +113,7 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
     }
 
     override fun onDialogPositiveClick() {
-        Toast.makeText(requireContext(), "working", Toast.LENGTH_SHORT).show()
-        viewLifecycleOwner.lifecycleScope.launch {
 
-        }
     }
 
     private fun handleLocationClick(lat: Double, lon: Double,id :String) {

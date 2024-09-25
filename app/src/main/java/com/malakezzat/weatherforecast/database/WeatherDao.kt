@@ -15,6 +15,9 @@ interface WeatherDao {
     @Query("SELECT * FROM weather_response WHERE id = :weatherId")
     suspend fun findByWeatherId(weatherId: Int): WeatherDB?
 
+    @Query("DELETE FROM weather_response WHERE id = :weatherId")
+    suspend fun deleteWeatherById(weatherId: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeatherResponse(weatherDB: WeatherDB)
 

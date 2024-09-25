@@ -10,12 +10,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.malakezzat.weatherforecast.InitActivity
 import com.malakezzat.weatherforecast.MainActivity
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.database.AppDatabase
@@ -24,7 +22,6 @@ import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.BottomSheetMarkerBinding
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModel
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModelFactory
-import com.malakezzat.weatherforecast.home.view.HomeFragment
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl

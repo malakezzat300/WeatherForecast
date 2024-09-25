@@ -23,6 +23,10 @@ class WeatherLocalDataSourceImpl(
         weatherDao.deleteWeatherResponse(weatherDB)
     }
 
+    override suspend fun deleteWeatherById(weatherId: Int) {
+        weatherDao.deleteWeatherById(weatherId)
+    }
+
     override suspend fun findWeatherById(weatherId: Int): WeatherDB? {
         return weatherDao.findByWeatherId(weatherId)
     }

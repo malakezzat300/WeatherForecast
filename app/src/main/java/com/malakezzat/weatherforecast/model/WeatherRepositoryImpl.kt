@@ -41,6 +41,10 @@ class WeatherRepositoryImpl(
         return weatherLocalDataSource.findWeatherById(weatherId)
     }
 
+    override suspend fun deleteWeatherById(weatherId: Int) {
+        weatherLocalDataSource.deleteWeatherById(weatherId)
+    }
+
     override suspend fun insertWeather(weatherDB: WeatherDB) {
         weatherLocalDataSource.insertWeather(weatherDB)
     }

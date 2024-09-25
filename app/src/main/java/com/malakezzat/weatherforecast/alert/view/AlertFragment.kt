@@ -2,6 +2,7 @@ package com.malakezzat.weatherforecast.alert.view
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -75,11 +76,14 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
         }
 
         binding.addAlertButton.setOnClickListener {
-            if(sharedPreferences.getBoolean(getString(R.string.enable_pref),false)){
-                showAlertDialog()
-            } else {
+            if(!sharedPreferences.getBoolean(getString(R.string.enable_pref),false)){
                 Toast.makeText(requireContext(),
                     getString(R.string.please_enable_notification_from_settings_first), Toast.LENGTH_SHORT).show()
+            } else if(!isNetworkAvailable()) {
+                Toast.makeText(requireContext(),
+                    getString(R.string.please_connect_to_internet_first_and_try_again_later), Toast.LENGTH_SHORT).show()
+            } else {
+                showAlertDialog()
             }
 
         }
@@ -99,5 +103,9 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
         }
     }
 
-
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
+    }
 }

@@ -86,10 +86,10 @@ class FavoriteViewModel(val weatherRepository: WeatherRepository) : ViewModel() 
         }
     }
 
-    fun removeFavoriteById(favoriteId: String) {
+    fun removeFavoriteById(favoriteId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                weatherRepository.deleteFavoriteById(favoriteId)
+                weatherRepository.deleteWeatherById(favoriteId)
                 getFavoriteData()
             } catch (e: Exception) {
                 Log.e("FavoriteViewModel", "Failed to remove Favorite: ${e.message}")

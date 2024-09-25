@@ -27,12 +27,12 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.malakezzat.weatherforecast.ConnectionBroadcastReceiver
+import com.malakezzat.weatherforecast.connection.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
-import com.malakezzat.weatherforecast.InitActivity
+import com.malakezzat.weatherforecast.init.InitActivity
 import com.malakezzat.weatherforecast.R
-import com.malakezzat.weatherforecast.ReceiverInterface
+import com.malakezzat.weatherforecast.connection.ReceiverInterface
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
@@ -43,9 +43,7 @@ import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
