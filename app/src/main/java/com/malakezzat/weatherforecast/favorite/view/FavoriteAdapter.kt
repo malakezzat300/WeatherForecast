@@ -1,6 +1,7 @@
 package com.malakezzat.weatherforecast.favorite.view
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -9,19 +10,14 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.WorkManager
 import com.malakezzat.weatherforecast.FavoriteDiffUtil
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.database.FavoriteDB
-import com.malakezzat.weatherforecast.databinding.AlertItemBinding
 import com.malakezzat.weatherforecast.databinding.FavoriteItemBinding
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.UUID
 
 class FavoriteAdapter(val context : Context,
-                       private val onDelete: (FavoriteDB) -> Unit) : ListAdapter<FavoriteDB, FavoriteAdapter.ViewHolder>(
+                       private val onDelete: (FavoriteDB) -> Unit,
+                      private val onLocationClick: (Double, Double,String) -> Unit) : ListAdapter<FavoriteDB, FavoriteAdapter.ViewHolder>(
     FavoriteDiffUtil()
 ){
 
@@ -36,6 +32,11 @@ class FavoriteAdapter(val context : Context,
         val favoriteItem = getItem(position)
 
         holder.binding.addressText.text = favoriteItem.address
+
+        holder.binding.constraintCard.setOnClickListener {
+            onLocationClick.invoke(favoriteItem.lat,favoriteItem.lon,favoriteItem.deleteId)
+            Log.i("favoriteTest", "onBindViewHolder: ${favoriteItem.deleteId}")
+        }
 
         holder.binding.favoriteMenuButton.setOnClickListener { view ->
             val popupMenu = PopupMenu(view.context, holder.binding.favoriteMenuButton)

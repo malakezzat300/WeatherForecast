@@ -1,5 +1,7 @@
 package com.malakezzat.weatherforecast.alert.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,6 +30,8 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
     private lateinit var factory: AlertViewModelFactory
     private lateinit var repository: WeatherRepository
     private lateinit var binding: FragmentAlertBinding
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +43,11 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreferences = requireActivity().getSharedPreferences(
+            getString(R.string.my_preference),
+            Context.MODE_PRIVATE
+        )
+
         repository = WeatherRepositoryImpl(
             WeatherRemoteDataSourceImpl.getInstance(),
             WeatherLocalDataSourceImpl(AppDatabase.getInstance(requireContext()))
@@ -66,7 +75,13 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
         }
 
         binding.addAlertButton.setOnClickListener {
-            showAlertDialog()
+            if(sharedPreferences.getBoolean(getString(R.string.enable_pref),false)){
+                showAlertDialog()
+            } else {
+                Toast.makeText(requireContext(),
+                    getString(R.string.please_enable_notification_from_settings_first), Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         viewModel.fetchAlertData()

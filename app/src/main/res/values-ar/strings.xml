@@ -54,4 +54,9 @@
     <string name="and_the_temperature_is">"و درجة الحرارة تكون"</string>
     <string name="please_select_time_after_now">"من فضلك اختار وقت بعد الان "</string>
     <string name="please_select_time_after_from_time">من فضلك اختار وقت بعد توقيت البداية</string>
+    <string name="no_internet">لا يوجد انترنت</string>
+    <string name="add">اضافة</string>
+    <string name="saved">تم الحفظ</string>
+    <string name="please_connect_to_internet_first_and_try_again_later">من فضلك قم بالاتصال بالانترنت اولا ثم حاول مرة اخري</string>
+    <string name="please_enable_notification_from_settings_first">"من فضلك قم بتشغيل الاشعارات من الاعدادات اولا "</string>
 </resources>

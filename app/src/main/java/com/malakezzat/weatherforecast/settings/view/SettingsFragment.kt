@@ -165,10 +165,16 @@ class SettingsFragment : Fragment() {
         binding.notificationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.enable_radio_button -> {
-                    //TODO   enable notification
+                    editor.putBoolean(getString(R.string.disable_pref),false)
+                    editor.putBoolean(getString(R.string.enable_pref),true)
+                    editor.commit()
+                    binding.enableRadioButton.isChecked = true
                 }
                 R.id.disable_radio_button -> {
-                    //TODO   disable notification
+                    editor.putBoolean(getString(R.string.disable_pref),true)
+                    editor.putBoolean(getString(R.string.enable_pref),false)
+                    editor.commit()
+                    binding.disableRadioButton.isChecked = true
                 }
             }
         }

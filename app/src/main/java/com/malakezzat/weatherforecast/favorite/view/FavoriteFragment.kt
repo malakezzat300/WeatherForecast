@@ -3,8 +3,10 @@ package com.malakezzat.weatherforecast.favorite.view
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import android.net.ConnectivityManager
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +29,7 @@ import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
 import com.malakezzat.weatherforecast.dialog.FavoriteDialogFragment
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModel
 import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModelFactory
+import com.malakezzat.weatherforecast.home.view.HomeFragment
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.location.MarkerBottomSheet
@@ -39,7 +42,7 @@ import com.malakezzat.weatherforecast.model.WeatherResponse
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import kotlinx.coroutines.launch
 
-class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListener, MarkerBottomSheet.MarkerBottomSheetListener {
+class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListener {
 
     private val TAG: String = "FavoriteFragment"
     private lateinit var viewModel: FavoriteViewModel
@@ -83,9 +86,15 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
                 } else {
                     binding.noFavoriteBackground.visibility = View.VISIBLE
                 }
-                val recyclerAdapter = FavoriteAdapter(requireContext()) { item ->
-                    viewModel.removeFavorite(item)
-                }
+                val recyclerAdapter = FavoriteAdapter(requireContext(),
+                    { item ->
+                        viewModel.removeFavorite(item)
+                        //TODO delete weather data
+                    },
+                    { lat, lon , id ->
+                        handleLocationClick(lat, lon,id)
+                    }
+                )
                 recyclerAdapter.submitList(list.toMutableList())
                 binding.favoriteRecyclerView.apply {
                     adapter = recyclerAdapter
@@ -96,7 +105,12 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
 
 
         binding.addFavButton.setOnClickListener{
-            showFavoriteDialog()
+            if (isNetworkAvailable()) {
+                showFavoriteDialog()
+            } else {
+                Toast.makeText(requireContext(),
+                    getString(R.string.please_connect_to_internet_first_and_try_again_later), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -113,8 +127,42 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
         }
     }
 
-    override fun onMarkerBottomSheetDismissed() {
+    private fun handleLocationClick(lat: Double, lon: Double,id :String) {
+        units = getUnits()
+        lang = getLanguage()
 
+        //TODO show ui for favorite item
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, FavoriteItemActivity(lat,lon,units,lang,id))
+            .addToBackStack(getString(R.string.favorite))
+            .commit()
+        Log.i("favoriteTest", "handleLocationClick: $id")
+        //Toast.makeText(requireContext(), "Lat: $lat, Lon: $lon", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun getUnits() : String {
+        return if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
+            "metric"
+        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
+            "imperial"
+        } else {
+            "standard"
+        }
+    }
+
+    private fun getLanguage() : String{
+        return if(sharedPreferences.getBoolean(getString(R.string.arabic_pref),false)){
+            "ar"
+        } else {
+            "en"
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
     }
 
 }

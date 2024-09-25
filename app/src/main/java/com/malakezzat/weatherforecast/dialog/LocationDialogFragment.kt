@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -44,16 +45,23 @@ class LocationDialogFragment : DialogFragment() {
             binding.mapRadioButton.text = getString(R.string.map)
             binding.notificationSwitch.isChecked = true
 
+
             binding.okButton.setOnClickListener {
-                val data = mapOf(
-                    getString(R.string.gps_pref) to binding.gpsRadioButton.isChecked,
-                    getString(R.string.map_pref) to binding.mapRadioButton.isChecked,
-                    getString(R.string.notification_pref) to binding.notificationSwitch.isChecked
-                )
-                editor.putBoolean(getString(R.string.first_run),false)
-                editor.commit()
-                listener.onDialogPositiveClick(data)
-                dismiss()
+                if (isNetworkAvailable()) {
+                    val data = mapOf(
+                        getString(R.string.gps_pref) to binding.gpsRadioButton.isChecked,
+                        getString(R.string.map_pref) to binding.mapRadioButton.isChecked,
+                        getString(R.string.notification_pref) to binding.notificationSwitch.isChecked
+                    )
+                    editor.putBoolean(getString(R.string.first_run),false)
+                    editor.commit()
+                    listener.onDialogPositiveClick(data)
+                    dismiss()
+                } else {
+                    Toast.makeText(requireContext(), "No internet connection. Please try again later.", Toast.LENGTH_SHORT).show()
+                }
+
+
             }
 
 
@@ -73,5 +81,11 @@ class LocationDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
     }
 }

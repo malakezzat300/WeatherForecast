@@ -10,6 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.malakezzat.weatherforecast.alert.view.AlertFragment
 import com.malakezzat.weatherforecast.databinding.ActivityMainBinding
 import com.malakezzat.weatherforecast.favorite.view.FavoriteFragment
@@ -103,7 +104,10 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else if(currentFragmentName != R.string.home){
+        } else if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack(getString(R.string.favorite), FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+        else if(currentFragmentName != R.string.home){
             replaceFragment(HomeFragment(), getString(R.string.home))
             currentFragmentName = R.string.home
         } else {

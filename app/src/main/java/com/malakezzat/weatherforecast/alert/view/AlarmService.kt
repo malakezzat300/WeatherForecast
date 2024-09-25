@@ -57,8 +57,7 @@ class AlarmService : Service() {
         binding.message.text = intent?.getStringExtra(getString(R.string.message_worker))
         binding.imageView.setImageResource(R.drawable.ic_cloud_alarm)
 
-        val dismissButton: Button = overlayView.findViewById(R.id.dismiss_button)
-        dismissButton.setOnClickListener {
+        binding.dismissButton.setOnClickListener {
             stopSelf()
         }
 

@@ -144,7 +144,7 @@ class FavoriteViewModel(val weatherRepository: WeatherRepository) : ViewModel() 
     }
 
 
-    fun storeWeatherData(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean) {
+    fun storeFavoriteData(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Int) {
         viewModelScope.launch {
             val weatherDB = WeatherDB.mapWeatherDB(weatherResponse,tempList,dayList,isHome)
             weatherRepository.insertWeather(weatherDB)
@@ -154,4 +154,19 @@ class FavoriteViewModel(val weatherRepository: WeatherRepository) : ViewModel() 
     suspend fun getStoredWeatherData(): WeatherDB? {
         return weatherRepository.getAllStoredWeather().firstOrNull()?.firstOrNull()
     }
+
+    suspend fun findByWeatherId(weatherId : Int) : WeatherDB?{
+        return weatherRepository.findWeatherById(weatherId)
+    }
+
+    suspend fun deleteWeather(weatherDB: WeatherDB){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                weatherRepository.deleteWeather(weatherDB)
+            } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "Failed to Weather Alert: ${e.message}")
+            }
+        }
+    }
+
 }

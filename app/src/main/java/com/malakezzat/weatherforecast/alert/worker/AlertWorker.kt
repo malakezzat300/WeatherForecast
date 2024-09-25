@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -21,11 +22,15 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
 
     val context: Context = appContext
     lateinit var message : String
-
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var repository: WeatherRepository
 
     override suspend fun doWork(): Result {
         return try {
+            sharedPreferences = context.getSharedPreferences(
+                context.getString(R.string.my_preference),
+                Context.MODE_PRIVATE)
+
             repository = WeatherRepositoryImpl(
                 WeatherRemoteDataSourceImpl.getInstance(),
                 WeatherLocalDataSourceImpl(AppDatabase.getInstance(context))
@@ -51,6 +56,7 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
             NotificationChannel(channelId, context.getString(R.string.channel), NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
 
+        if(sharedPreferences.getBoolean(context.getString(R.string.enable_pref),false)){
         if(type == R.string.notification) {
             val notification = NotificationCompat.Builder(context, channelId)
                 .setContentTitle(context.getString(R.string.app_name))
@@ -65,7 +71,7 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
             intent.putExtra(context.getString(R.string.message_worker),message)
             context.startService(intent)
         }
-
+    }
 
     }
 

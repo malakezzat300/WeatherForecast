@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -99,7 +100,13 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
 
         editor.putBoolean(getString(R.string.gps_pref),gps ?: false)
         editor.putBoolean(getString(R.string.map_pref),map ?: false)
-        editor.putBoolean(getString(R.string.notification_pref),notification ?: false)
+        if(notification == true){
+            editor.putBoolean(getString(R.string.enable_pref),true)
+            editor.putBoolean(getString(R.string.disable_pref),false)
+        } else {
+            editor.putBoolean(getString(R.string.disable_pref),true)
+            editor.putBoolean(getString(R.string.enable_pref),false)
+        }
         editor.commit()
 
         if(gps == true){

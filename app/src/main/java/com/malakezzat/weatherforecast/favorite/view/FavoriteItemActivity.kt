@@ -1,4 +1,4 @@
-package com.malakezzat.weatherforecast.home.view
+package com.malakezzat.weatherforecast.favorite.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,45 +28,46 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.malakezzat.weatherforecast.ConnectionBroadcastReceiver
-import com.malakezzat.weatherforecast.model.WeatherRepository
-import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.InitActivity
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.ReceiverInterface
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
-import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
+import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModel
+import com.malakezzat.weatherforecast.favorite.viewmodel.FavoriteViewModelFactory
+import com.malakezzat.weatherforecast.home.view.DayAdapter
+import com.malakezzat.weatherforecast.home.view.TempAdapter
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.TempWeather
+import com.malakezzat.weatherforecast.model.WeatherRepository
+import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.model.WeatherResponse
-import kotlinx.coroutines.Dispatchers
+import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.random.Random
 
-class HomeFragment : Fragment() , ReceiverInterface {
+class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,val lang :String,val id : String)
+    : Fragment() , ReceiverInterface {
 
-    private val TAG: String = "HomeFragment"
-    private lateinit var viewModel: HomeViewModel
-    private lateinit var factory: HomeViewModelFactory
+    private val TAG: String = "FavoriteItemActivity"
+    private lateinit var viewModel: FavoriteViewModel
+    private lateinit var factory: FavoriteViewModelFactory
     private lateinit var repository: WeatherRepository
     private lateinit var binding: FragmentHomeBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: Editor
-    private lateinit var fusedClient: FusedLocationProviderClient
-    private lateinit var units: String
-    private lateinit var lang: String
     private lateinit var weatherResponseStore: WeatherResponse
     private lateinit var tempListStore: List<ListF>
     private lateinit var dayListStore: List<DayWeather>
-    private val isHome = true
+    private val isHome = false
     private lateinit var connectionBroadcastReceiver: ConnectionBroadcastReceiver
 
     override fun onCreateView(
@@ -87,9 +88,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
             )
         )
 
-        factory = HomeViewModelFactory(repository)
+        factory = FavoriteViewModelFactory(repository)
 
-        viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory).get(FavoriteViewModel::class.java)
 
         sharedPreferences = requireActivity().getSharedPreferences(
             getString(R.string.my_preference),
@@ -97,34 +98,10 @@ class HomeFragment : Fragment() , ReceiverInterface {
         )
         editor = sharedPreferences.edit()
 
+        viewModel.fetchWeatherData(lat = lat, lon = lon,units,lang)
+        viewModel.fetchForecastData(lat = lat, lon = lon,units,lang)
+        viewModel.fetchForecastDataDays(lat = lat, lon = lon,40,units,lang)
 
-        if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
-            getFreshLocation()
-        } else if (sharedPreferences.getBoolean(getString(R.string.map_pref), false)) {
-
-        }
-
-        if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
-            units = "metric"
-        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
-            units = "imperial"
-        } else {
-            units = "standard"
-        }
-
-        if (sharedPreferences.getBoolean(getString(R.string.arabic_pref), false)) {
-            lang = "ar"
-        } else {
-            lang = "en"
-        }
-
-        var lat = sharedPreferences.getString(getString(R.string.lat), "0.0") ?: "0.0"
-        var lon = sharedPreferences.getString(getString(R.string.lon), "0.0") ?: "0.0"
-
-        Log.i(TAG, "onViewCreated: lat: $lat")
-        Log.i(TAG, "onViewCreated: lon: $lon")
-
-        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(), units, lang)
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weatherResponse ->
             Log.i(TAG, "onViewCreated: ${weatherResponse.dt}")
             weatherResponseStore = weatherResponse
@@ -137,7 +114,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
             binding.temp = setFormattedTemperature(weatherResponse.main.temp)
         })
 
-        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
         viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = TempAdapter(requireContext())
             tempListStore = refactorTemperatureList(forecastResponse.list)
@@ -150,7 +126,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
             }
         })
 
-        viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(), 40, units, lang)
         viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
             val recyclerAdapter = DayAdapter(requireContext())
             Log.i(TAG, "onViewCreated: $forecastResponse")
@@ -166,72 +141,23 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
         viewModel.combinedData.observe(viewLifecycleOwner) { (weatherResponse, forecastResponse, forecastDaysResponse) ->
             if (weatherResponse != null && forecastResponse != null && forecastDaysResponse != null) {
-                storeHomeWeather()
+                storeHomeWeather(id.toInt())
             }
         }
 
 
 
         binding.swipeRefresh.setOnRefreshListener {
-            if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
-                getFreshLocation()
-            } else if (sharedPreferences.getBoolean(getString(R.string.gps_pref), false)) {
-                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
-                viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
-                viewModel.fetchForecastDataDays(lat.toDouble(), lon.toDouble(), 40, units, lang)
-            }
-            storeHomeWeather()
+            viewModel.fetchForecastData(lat, lon, units, lang)
+            viewModel.fetchForecastData(lat, lon, units, lang)
+            viewModel.fetchForecastDataDays(lat, lon, 40, units, lang)
+            storeHomeWeather(id.toInt())
             binding.swipeRefresh.isRefreshing = false
         }
 
 
 
 
-    }
-
-    @SuppressLint("MissingPermission")
-    fun getFreshLocation() {
-        fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 300000)
-            .setMinUpdateIntervalMillis(300000)
-            .setMaxUpdateDelayMillis(600000)
-            .build()
-
-        fusedClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-
-                    if (locationResult.locations.isNotEmpty()) {
-                        val location: Location? = locationResult.lastLocation
-                        Log.i(
-                            InitActivity.TAG,
-                            "Location updated: ${location?.latitude}, ${location?.longitude}"
-                        )
-
-                        val lat: String = location?.latitude.toString()
-                        val lon: String = location?.longitude.toString()
-                        editor.putString("lat", lat)
-                        editor.putString("lon", lon)
-                        editor.apply()
-
-                        // Fetch updated weather data
-                        viewModel.fetchWeatherData(lat.toDouble(), lon.toDouble(), units, lang)
-                        viewModel.fetchForecastData(lat.toDouble(), lon.toDouble(), units, lang)
-                        viewModel.fetchForecastDataDays(
-                            lat.toDouble(),
-                            lon.toDouble(),
-                            40,
-                            units,
-                            lang
-                        )
-                    }
-                }
-            },
-            Looper.getMainLooper()
-        )
     }
 
     fun dateConverter(dt: Long): String {
@@ -368,19 +294,16 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
     }
 
-    fun storeHomeWeather() {
+    fun storeHomeWeather(id : Int) {
         if(this::weatherResponseStore.isInitialized
-        && this::tempListStore.isInitialized
-        && this::dayListStore.isInitialized)
+            && this::tempListStore.isInitialized
+            && this::dayListStore.isInitialized)
         {
-            viewModel.storeWeatherData(weatherResponseStore, tempListStore, dayListStore, 1)
+            viewModel.storeFavoriteData(weatherResponseStore, tempListStore, dayListStore,id )
         }
     }
 
     override fun loadFromNetwork() {
-        val lat = sharedPreferences.getString(getString(R.string.lat), "0.0")?.toDouble() ?: 0.0
-        val lon = sharedPreferences.getString(getString(R.string.lon), "0.0")?.toDouble() ?: 0.0
-
         viewModel.fetchWeatherData(lat, lon, units, lang)
         viewModel.currentWeather.observe(viewLifecycleOwner) { weatherResponse ->
             if (weatherResponse != null) {
@@ -422,7 +345,8 @@ class HomeFragment : Fragment() , ReceiverInterface {
     override fun loadFromDataBase() {
         Log.i(TAG, "loadFromDataBase: no internet")
         lifecycleScope.launch {
-            val weatherData = viewModel.getStoredWeatherData()
+            val weatherData = viewModel.findByWeatherId(id.toInt())
+            Log.i("favoriteTest", "loadFromDataBase: ${id}")
             if (weatherData != null) {
                 Log.i(TAG, "loadFromDataBase: Weather data loaded from database successfully.")
                 binding.cityName.text = weatherData.name

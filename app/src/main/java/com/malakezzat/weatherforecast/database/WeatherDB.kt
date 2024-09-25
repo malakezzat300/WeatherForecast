@@ -26,7 +26,6 @@ data class WeatherDB (
     val sunrise: Long,
     val sunset: Long,
     val name: String,
-    val isHome : Boolean,
 
     //temp
     val dt1: Long,
@@ -91,9 +90,9 @@ data class WeatherDB (
         )
     }
     companion object {
-        fun mapWeatherDB(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean): WeatherDB {
+        fun mapWeatherDB(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Int): WeatherDB {
             return WeatherDB(
-                id = if (isHome) 1 else 0,
+                id = isHome, // 1 to home and any to favorite
                 lat = weatherResponse.coord.lat,
                 lon = weatherResponse.coord.lon,
                 description = weatherResponse.weather[0].description,
@@ -109,7 +108,6 @@ data class WeatherDB (
                 sunrise = weatherResponse.sys.sunrise,
                 sunset = weatherResponse.sys.sunset,
                 name = weatherResponse.name,
-                isHome = isHome,
                 // Temperature data
                 dt1 = tempList[0].dt,
                 icon1 = tempList[0].weather[0].icon,

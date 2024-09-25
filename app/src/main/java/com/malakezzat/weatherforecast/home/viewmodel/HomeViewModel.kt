@@ -88,7 +88,7 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     }
 
 
-    fun storeWeatherData(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Boolean) {
+    fun storeWeatherData(weatherResponse: WeatherResponse, tempList: List<ListF>, dayList: List<DayWeather>, isHome: Int) {
         viewModelScope.launch {
             val weatherDB = WeatherDB.mapWeatherDB(weatherResponse,tempList,dayList,isHome)
             weatherRepository.insertWeather(weatherDB)
@@ -96,7 +96,7 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     }
 
     suspend fun getStoredWeatherData(): WeatherDB? {
-        return weatherRepository.getAllStoredWeather().firstOrNull()?.firstOrNull()
+        return weatherRepository.findWeatherById(1)
     }
 
 

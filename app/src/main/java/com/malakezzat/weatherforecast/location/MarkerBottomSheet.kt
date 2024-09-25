@@ -48,10 +48,6 @@ class MarkerBottomSheet (
     private lateinit var repository: WeatherRepository
     lateinit var binding : BottomSheetMarkerBinding
 
-    interface MarkerBottomSheetListener {
-        fun onMarkerBottomSheetDismissed()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
