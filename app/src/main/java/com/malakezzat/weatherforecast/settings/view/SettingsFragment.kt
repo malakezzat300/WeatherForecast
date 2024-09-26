@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -249,8 +250,19 @@ class SettingsFragment : Fragment() {
         Locale.setDefault(locale)
         val config = resources.configuration
         config.setLocale(locale)
+
+        val layoutDirection = if (isRTL(languageCode)) {
+            View.LAYOUT_DIRECTION_RTL
+        } else {
+            View.LAYOUT_DIRECTION_LTR
+        }
         config.setLayoutDirection(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
+        requireActivity().window.decorView.layoutDirection = layoutDirection
         requireActivity().recreate()
+    }
+
+    private fun isRTL(languageCode: String): Boolean {
+        return TextUtils.getLayoutDirectionFromLocale(Locale(languageCode)) == View.LAYOUT_DIRECTION_RTL
     }
 }
