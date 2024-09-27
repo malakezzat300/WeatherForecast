@@ -12,12 +12,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.malakezzat.weatherforecast.ApiState
 import com.malakezzat.weatherforecast.connection.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.connection.ReceiverInterface
@@ -89,42 +92,99 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
         viewModel.fetchForecastData(lat = lat, lon = lon,units,lang)
         viewModel.fetchForecastDataDays(lat = lat, lon = lon,40,units,lang)
 
-        viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weatherResponse ->
-            Log.i(TAG, "onViewCreated: ${weatherResponse.dt}")
-            weatherResponseStore = weatherResponse
-            binding.weatherResponse = weatherResponse
-            binding.date = dateConverter(weatherResponse.dt)
-            setIcon(weatherResponse.weather[0].icon)
-            binding.sunset = dateConverterForSun(weatherResponse.sys.sunset)
-            binding.sunrise = dateConverterForSun(weatherResponse.sys.sunrise)
-            binding.windSpeed = getFormattedWindSpeed(weatherResponse.wind.speed)
-            binding.temp = setFormattedTemperature(weatherResponse.main.temp)
-        })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentWeather.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state (e.g., show loading spinner)
+                            Log.i(TAG, "Loading current weather data")
+                        }
 
-        viewModel.currentForecast.observe(viewLifecycleOwner, Observer { forecastResponse ->
-            val recyclerAdapter = TempAdapter(requireContext())
-            tempListStore = refactorTemperatureList(forecastResponse.list)
-            recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
-            binding.tempRecyclerView.apply {
-                adapter = recyclerAdapter
-                layoutManager = LinearLayoutManager(requireContext()).apply {
-                    orientation = RecyclerView.HORIZONTAL
+                        is ApiState.Success -> {
+                            val weatherResponse = apiState.data
+                            Log.i(TAG, "Weather data received: ${weatherResponse.dt}")
+                            weatherResponseStore = weatherResponse
+                            binding.weatherResponse = weatherResponse
+                            binding.date = dateConverter(weatherResponse.dt)
+                            setIcon(weatherResponse.weather[0].icon)
+                            binding.sunset = dateConverterForSun(weatherResponse.sys.sunset)
+                            binding.sunrise = dateConverterForSun(weatherResponse.sys.sunrise)
+                            binding.windSpeed = getFormattedWindSpeed(weatherResponse.wind.speed)
+                            binding.temp = setFormattedTemperature(weatherResponse.main.temp)
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching weather data: ${apiState.exception}")
+                        }
+                    }
                 }
             }
-        })
+        }
 
-        viewModel.currentForecastDays.observe(viewLifecycleOwner, Observer { forecastResponse ->
-            val recyclerAdapter = DayAdapter(requireContext())
-            Log.i(TAG, "onViewCreated: $forecastResponse")
-            dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
-            recyclerAdapter.submitList(dayListStore.toMutableList())
-            binding.daysRecyclerView.apply {
-                adapter = recyclerAdapter
-                layoutManager = LinearLayoutManager(requireContext()).apply {
-                    orientation = RecyclerView.VERTICAL
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentForecast.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state
+                            Log.i(TAG, "Loading forecast data")
+                        }
+
+                        is ApiState.Success -> {
+                            val forecastResponse = apiState.data
+                            val recyclerAdapter = TempAdapter(requireContext())
+                            tempListStore = refactorTemperatureList(forecastResponse.list)
+                            recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
+                            binding.tempRecyclerView.apply {
+                                adapter = recyclerAdapter
+                                layoutManager = LinearLayoutManager(requireContext()).apply {
+                                    orientation = RecyclerView.HORIZONTAL
+                                }
+                            }
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching forecast data: ${apiState.exception}")
+                        }
+                    }
                 }
             }
-        })
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentForecastDays.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state
+                            Log.i(TAG, "Loading forecast days data")
+                        }
+
+                        is ApiState.Success -> {
+                            val forecastResponse = apiState.data
+                            val recyclerAdapter = DayAdapter(requireContext())
+                            Log.i(TAG, "Forecast days data received: $forecastResponse")
+                            dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
+                            recyclerAdapter.submitList(dayListStore.toMutableList())
+                            binding.daysRecyclerView.apply {
+                                adapter = recyclerAdapter
+                                layoutManager = LinearLayoutManager(requireContext()).apply {
+                                    orientation = RecyclerView.VERTICAL
+                                }
+                            }
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching forecast days data: ${apiState.exception}")
+                        }
+                    }
+                }
+            }
+        }
 
         viewModel.combinedData.observe(viewLifecycleOwner) { (weatherResponse, forecastResponse, forecastDaysResponse) ->
             if (weatherResponse != null && forecastResponse != null && forecastDaysResponse != null) {
@@ -292,39 +352,100 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
     override fun loadFromNetwork() {
         viewModel.fetchWeatherData(lat, lon, units, lang)
-        viewModel.currentWeather.observe(viewLifecycleOwner) { weatherResponse ->
-            if (weatherResponse != null) {
-                Log.i(TAG, "loadFromNetwork: Weather data fetched successfully.")
-                weatherResponseStore = weatherResponse
-                binding.weatherResponse = weatherResponse
-                binding.date = dateConverter(weatherResponse.dt)
-                setIcon(weatherResponse.weather[0].icon)
-                binding.sunset = dateConverterForSun(weatherResponse.sys.sunset)
-                binding.sunrise = dateConverterForSun(weatherResponse.sys.sunrise)
-                binding.windSpeed = getFormattedWindSpeed(weatherResponse.wind.speed)
-                binding.temp = setFormattedTemperature(weatherResponse.main.temp)
-            } else {
-                Log.e(TAG, "loadFromNetwork: Weather data fetch failed.")
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentWeather.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state (e.g., show loading spinner)
+                            Log.i(TAG, "Loading current weather data")
+                        }
+
+                        is ApiState.Success -> {
+                            val weatherResponse = apiState.data
+                            Log.i(TAG, "Weather data received: ${weatherResponse.dt}")
+                            weatherResponseStore = weatherResponse
+                            binding.weatherResponse = weatherResponse
+                            binding.date = dateConverter(weatherResponse.dt)
+                            setIcon(weatherResponse.weather[0].icon)
+                            binding.sunset = dateConverterForSun(weatherResponse.sys.sunset)
+                            binding.sunrise = dateConverterForSun(weatherResponse.sys.sunrise)
+                            binding.windSpeed = getFormattedWindSpeed(weatherResponse.wind.speed)
+                            binding.temp = setFormattedTemperature(weatherResponse.main.temp)
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching weather data: ${apiState.exception}")
+                        }
+                    }
+                }
             }
         }
 
         viewModel.fetchForecastData(lat, lon, units, lang)
-        viewModel.currentForecast.observe(viewLifecycleOwner) { forecastResponse ->
-            if (forecastResponse != null) {
-                val recyclerAdapter = TempAdapter(requireContext())
-                tempListStore = refactorTemperatureList(forecastResponse.list)
-                recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
-                binding.tempRecyclerView.adapter = recyclerAdapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentForecast.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state
+                            Log.i(TAG, "Loading forecast data")
+                        }
+
+                        is ApiState.Success -> {
+                            val forecastResponse = apiState.data
+                            val recyclerAdapter = TempAdapter(requireContext())
+                            tempListStore = refactorTemperatureList(forecastResponse.list)
+                            recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
+                            binding.tempRecyclerView.apply {
+                                adapter = recyclerAdapter
+                                layoutManager = LinearLayoutManager(requireContext()).apply {
+                                    orientation = RecyclerView.HORIZONTAL
+                                }
+                            }
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching forecast data: ${apiState.exception}")
+                        }
+                    }
+                }
             }
         }
 
         viewModel.fetchForecastDataDays(lat, lon, 40, units, lang)
-        viewModel.currentForecastDays.observe(viewLifecycleOwner) { forecastResponse ->
-            if (forecastResponse != null) {
-                val recyclerAdapter = DayAdapter(requireContext())
-                dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
-                recyclerAdapter.submitList(dayListStore.toMutableList())
-                binding.daysRecyclerView.adapter = recyclerAdapter
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentForecastDays.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            //TODO Handle loading state
+                            Log.i(TAG, "Loading forecast days data")
+                        }
+
+                        is ApiState.Success -> {
+                            //TODO Handle Success state
+                            val forecastResponse = apiState.data
+                            val recyclerAdapter = DayAdapter(requireContext())
+                            Log.i(TAG, "Forecast days data received: $forecastResponse")
+                            dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
+                            recyclerAdapter.submitList(dayListStore.toMutableList())
+                            binding.daysRecyclerView.apply {
+                                adapter = recyclerAdapter
+                                layoutManager = LinearLayoutManager(requireContext()).apply {
+                                    orientation = RecyclerView.VERTICAL
+                                }
+                            }
+                        }
+
+                        is ApiState.Failure -> {
+                            //TODO Handle error state
+                            Log.e(TAG, "Error fetching forecast days data: ${apiState.exception}")
+                        }
+                    }
+                }
             }
         }
     }

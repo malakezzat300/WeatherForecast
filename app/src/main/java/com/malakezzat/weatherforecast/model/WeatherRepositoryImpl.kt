@@ -1,5 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
+import com.malakezzat.weatherforecast.ApiState
 import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSource
@@ -16,9 +17,13 @@ class WeatherRepositoryImpl(
         lon: Double,
         units: String,
         lang: String
-    ): WeatherResponse {
-        val weatherResponse = weatherRemoteDataSource.getWeatherOverNetwork(lat, lon, units, lang)
-        return weatherResponse
+    ): ApiState<WeatherResponse> {
+        return try {
+            val weatherResponse = weatherRemoteDataSource.getWeatherOverNetwork(lat, lon, units, lang)
+            ApiState.Success(weatherResponse)
+        } catch (e: Exception) {
+            ApiState.Failure(e)
+        }
     }
 
     override suspend fun getForecastOverNetwork(
@@ -27,9 +32,13 @@ class WeatherRepositoryImpl(
         cnt: Int,
         units: String,
         lang: String
-    ): ForecastResponse {
-        val forecastResponse = weatherRemoteDataSource.getForecastOverNetwork(lat, lon, cnt, units, lang)
-        return forecastResponse
+    ): ApiState<ForecastResponse> {
+        return try {
+            val forecastResponse = weatherRemoteDataSource.getForecastOverNetwork(lat, lon, cnt, units, lang)
+            ApiState.Success(forecastResponse)
+        } catch (e: Exception) {
+            ApiState.Failure(e)
+        }
     }
 
 

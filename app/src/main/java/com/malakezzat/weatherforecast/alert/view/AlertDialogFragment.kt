@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.malakezzat.weatherforecast.ApiState
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.worker.AlertWorker
 import com.malakezzat.weatherforecast.database.AppDatabase
@@ -136,7 +137,13 @@ class AlertDialogFragment : DialogFragment() {
     }
 
     private fun saveAlert() {
-        val message = checkWeather(fromCalendar, viewModel.currentForecastDays.value?.list ?: listOf()) ?: " "
+        val forecastData = when (val forecastState = viewModel.currentForecastDays.value) {
+            is ApiState.Success -> forecastState.data.list
+            else -> listOf()
+        }
+
+        val message = checkWeather(fromCalendar, forecastData) ?: " "
+
         val newAlert = Alert(
             0,
             fromCalendar.timeInMillis,
@@ -146,8 +153,10 @@ class AlertDialogFragment : DialogFragment() {
             if (binding.alarmRadioButton.isChecked) R.string.alarm else R.string.notification,
             message,
             " ",
-            Random.nextInt().toString())
-        newAlert.workId = scheduleNotification(requireContext(),fromCalendar.timeInMillis,newAlert)
+            Random.nextInt().toString()
+        )
+
+        newAlert.workId = scheduleNotification(requireContext(), fromCalendar.timeInMillis, newAlert)
         listener.onDialogPositiveClick(newAlert)
         dismiss()
     }

@@ -11,9 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.malakezzat.weatherforecast.ApiState
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
@@ -63,95 +66,122 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
         )
         factory = FavoriteViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(FavoriteViewModel::class.java)
-        sharedPreferences = requireActivity().getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences(
+            getString(R.string.my_preference),
+            Context.MODE_PRIVATE
+        )
 
         viewModel.fetchFavoriteData()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favoriteList.collect { list ->
-                if(list.isNotEmpty()){
-                    binding.noFavoriteBackground.visibility = View.GONE
-                } else {
-                    binding.noFavoriteBackground.visibility = View.VISIBLE
-                }
-                val recyclerAdapter = FavoriteAdapter(requireContext(),
-                    { item ->
-                        viewModel.removeFavorite(item)
-                        viewModel.removeFavoriteById(item.deleteId.toInt())
-                    },
-                    { lat, lon , id ->
-                        handleLocationClick(lat, lon,id)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favoriteList.collect { apiState ->
+                    when (apiState) {
+                        is ApiState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        is ApiState.Success -> {
+                            val list = apiState.data
+                            if (list.isNotEmpty()) {
+                                binding.noFavoriteBackground.visibility = View.GONE
+                            } else {
+                                binding.noFavoriteBackground.visibility = View.VISIBLE
+                            }
+                            binding.progressBar.visibility = View.GONE
+
+                            val recyclerAdapter = FavoriteAdapter(requireContext(),
+                                { item ->
+                                    viewModel.removeFavorite(item)
+                                    viewModel.removeFavoriteById(item.deleteId.toInt())
+                                },
+                                { lat, lon, id ->
+                                    handleLocationClick(lat, lon, id)
+                                }
+                            )
+                            recyclerAdapter.submitList(list.toMutableList())
+                            binding.favoriteRecyclerView.apply {
+                                adapter = recyclerAdapter
+                                layoutManager = LinearLayoutManager(requireContext())
+                            }
+                        }
+
+                        is ApiState.Failure -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to load favorites: ${apiState.exception.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            binding.progressBar.visibility = View.GONE
+                        }
                     }
-                )
-                recyclerAdapter.submitList(list.toMutableList())
-                binding.favoriteRecyclerView.apply {
-                    adapter = recyclerAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
                 }
             }
         }
 
 
-        binding.addFavButton.setOnClickListener{
-            binding.progressBar.visibility = View.VISIBLE
-            if (isNetworkAvailable()) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    delay(600)
-                    showFavoriteDialog()
-                    binding.progressBar.visibility = View.GONE
+            binding.addFavButton.setOnClickListener {
+                binding.progressBar.visibility = View.VISIBLE
+                if (isNetworkAvailable()) {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(600)
+                        showFavoriteDialog()
+                        binding.progressBar.visibility = View.GONE
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.please_connect_to_internet_first_and_try_again_later),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+            }
+        }
+
+
+        private fun showFavoriteDialog() {
+            val dialog = FavoriteDialogFragment.newInstance(this)
+            dialog.show(parentFragmentManager, "FavoriteDialogFragment")
+        }
+
+        override fun onDialogPositiveClick() {
+
+        }
+
+        private fun handleLocationClick(lat: Double, lon: Double, id: String) {
+            units = getUnits()
+            lang = getLanguage()
+
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, FavoriteItemActivity(lat, lon, units, lang, id))
+                .addToBackStack(getString(R.string.favorite))
+                .commit()
+            Log.i("favoriteTest", "handleLocationClick: $id")
+        }
+
+        private fun getUnits(): String {
+            return if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
+                "metric"
+            } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
+                "imperial"
             } else {
-                Toast.makeText(requireContext(),
-                    getString(R.string.please_connect_to_internet_first_and_try_again_later), Toast.LENGTH_SHORT).show()
+                "standard"
             }
         }
-    }
 
-
-    private fun showFavoriteDialog() {
-        val dialog = FavoriteDialogFragment.newInstance(this)
-        dialog.show(parentFragmentManager, "FavoriteDialogFragment")
-    }
-
-    override fun onDialogPositiveClick() {
-
-    }
-
-    private fun handleLocationClick(lat: Double, lon: Double,id :String) {
-        units = getUnits()
-        lang = getLanguage()
-
-        //TODO show ui for favorite item
-
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, FavoriteItemActivity(lat,lon,units,lang,id))
-            .addToBackStack(getString(R.string.favorite))
-            .commit()
-        Log.i("favoriteTest", "handleLocationClick: $id")
-        //Toast.makeText(requireContext(), "Lat: $lat, Lon: $lon", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getUnits() : String {
-        return if (sharedPreferences.getBoolean(getString(R.string.celsius_pref), false)) {
-            "metric"
-        } else if (sharedPreferences.getBoolean(getString(R.string.fahrenheit_pref), false)) {
-            "imperial"
-        } else {
-            "standard"
+        private fun getLanguage(): String {
+            return if (sharedPreferences.getBoolean(getString(R.string.arabic_pref), false)) {
+                "ar"
+            } else {
+                "en"
+            }
         }
-    }
 
-    private fun getLanguage() : String{
-        return if(sharedPreferences.getBoolean(getString(R.string.arabic_pref),false)){
-            "ar"
-        } else {
-            "en"
+        private fun isNetworkAvailable(): Boolean {
+            val connectivityManager =
+                requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork = connectivityManager.activeNetworkInfo
+            return activeNetwork != null && activeNetwork.isConnected
         }
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnected
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
+import com.malakezzat.weatherforecast.ApiState
 import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.database.WeatherDB
 import kotlinx.coroutines.flow.Flow
@@ -9,13 +10,13 @@ interface WeatherRepository {
     suspend fun getWeatherOverNetwork(lat: Double,
                                       lon: Double,
                                       units: String = " ",
-                                      lang: String = "en") : WeatherResponse
+                                      lang: String = "en") : ApiState<WeatherResponse>
 
     suspend fun getForecastOverNetwork(lat: Double,
                                       lon: Double,
                                       cnt : Int = 7,
                                       units: String = " ",
-                                      lang: String = "en") : ForecastResponse
+                                      lang: String = "en") : ApiState<ForecastResponse>
 
     suspend fun insertWeather(weatherDB: WeatherDB)
     suspend fun deleteWeather(weatherDB: WeatherDB)
