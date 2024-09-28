@@ -365,7 +365,19 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
+        <ProgressBar
+            android:id="@+id/progress_bar_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="?android:attr/progressBarStyle"
+            android:elevation="48dp"
+            android:indeterminateBehavior="repeat"
+            android:visibility="gone"
+            />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

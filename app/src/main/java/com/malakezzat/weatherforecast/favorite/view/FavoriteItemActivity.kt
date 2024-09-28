@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -96,13 +97,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentWeather.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state (e.g., show loading spinner)
-                            Log.i(TAG, "Loading current weather data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
                             val weatherResponse = apiState.data
-                            Log.i(TAG, "Weather data received: ${weatherResponse.dt}")
+                            binding.progressBarDetails.visibility = View.GONE
                             weatherResponseStore = weatherResponse
                             binding.weatherResponse = weatherResponse
                             binding.date = dateConverter(weatherResponse.dt)
@@ -114,8 +114,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching weather data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -127,12 +128,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentForecast.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state
-                            Log.i(TAG, "Loading forecast data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
                             val forecastResponse = apiState.data
+                            binding.progressBarDetails.visibility = View.GONE
                             val recyclerAdapter = TempAdapter(requireContext())
                             tempListStore = refactorTemperatureList(forecastResponse.list)
                             recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
@@ -145,8 +146,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching forecast data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -158,12 +160,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentForecastDays.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state
-                            Log.i(TAG, "Loading forecast days data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
                             val forecastResponse = apiState.data
+                            binding.progressBarDetails.visibility = View.GONE
                             val recyclerAdapter = DayAdapter(requireContext())
                             Log.i(TAG, "Forecast days data received: $forecastResponse")
                             dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
@@ -177,8 +179,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching forecast days data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -356,12 +359,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentWeather.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state (e.g., show loading spinner)
-                            Log.i(TAG, "Loading current weather data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
                             val weatherResponse = apiState.data
+                            binding.progressBarDetails.visibility = View.GONE
                             Log.i(TAG, "Weather data received: ${weatherResponse.dt}")
                             weatherResponseStore = weatherResponse
                             binding.weatherResponse = weatherResponse
@@ -374,8 +377,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching weather data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -388,12 +392,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentForecast.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state
-                            Log.i(TAG, "Loading forecast data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
                             val forecastResponse = apiState.data
+                            binding.progressBarDetails.visibility = View.GONE
                             val recyclerAdapter = TempAdapter(requireContext())
                             tempListStore = refactorTemperatureList(forecastResponse.list)
                             recyclerAdapter.submitList(convertListFToTempWeatherList(tempListStore).toMutableList())
@@ -406,8 +410,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching forecast data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -420,13 +425,12 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                 viewModel.currentForecastDays.collect { apiState ->
                     when (apiState) {
                         is ApiState.Loading -> {
-                            //TODO Handle loading state
-                            Log.i(TAG, "Loading forecast days data")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle Success state
                             val forecastResponse = apiState.data
+                            binding.progressBarDetails.visibility = View.GONE
                             val recyclerAdapter = DayAdapter(requireContext())
                             Log.i(TAG, "Forecast days data received: $forecastResponse")
                             dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
@@ -440,8 +444,9 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle error state
-                            Log.e(TAG, "Error fetching forecast days data: ${apiState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

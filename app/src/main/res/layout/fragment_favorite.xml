@@ -17,12 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
+        android:layout_marginBottom="32dp"
         android:elevation="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/no_favorite_background"
-        app:layout_constraintEnd_toEndOf="@+id/favorite_recycler_view"
-        app:layout_constraintStart_toStartOf="@+id/favorite_recycler_view"
-        app:layout_constraintTop_toTopOf="@+id/favorite_recycler_view" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/add_fav_button"

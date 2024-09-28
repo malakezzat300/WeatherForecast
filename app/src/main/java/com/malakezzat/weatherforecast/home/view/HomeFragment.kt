@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -130,12 +131,11 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentWeather.collect { weatherState ->
                     when (weatherState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading weather data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the weather data
+                            binding.progressBarDetails.visibility = View.GONE
                             val weatherResponse = weatherState.data
                             Log.i(TAG, "Weather data: ${weatherResponse.dt}")
                             weatherResponseStore = weatherResponse
@@ -149,8 +149,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle failure case, such as showing an error message
-                            Log.e(TAG, "Failed to fetch weather data: ${weatherState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -163,12 +164,11 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentForecast.collect { forecastState ->
                     when (forecastState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading forecast data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the forecast data
+                            binding.progressBarDetails.visibility = View.GONE
                             val forecastResponse = forecastState.data
                             val recyclerAdapter = TempAdapter(requireContext())
                             tempListStore = refactorTemperatureList(forecastResponse.list)
@@ -182,8 +182,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle failure case
-                            Log.e(TAG, "Failed to fetch forecast data: ${forecastState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -196,12 +197,11 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentForecastDays.collect { forecastDaysState ->
                     when (forecastDaysState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading forecast days data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the forecast days data
+                            binding.progressBarDetails.visibility = View.VISIBLE
                             val forecastResponse = forecastDaysState.data
                             val recyclerAdapter = DayAdapter(requireContext())
                             dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
@@ -215,11 +215,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle failure case
-                            Log.e(
-                                TAG,
-                                "Failed to fetch forecast days data: ${forecastDaysState.exception}"
-                            )
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -448,12 +446,11 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentWeather.collect { weatherState ->
                     when (weatherState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading weather data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the weather data
+                            binding.progressBarDetails.visibility = View.GONE
                             val weatherResponse = weatherState.data
                             Log.i(TAG, "Weather data fetched successfully.")
                             weatherResponseStore = weatherResponse
@@ -467,8 +464,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle failure case
-                            Log.e(TAG, "Failed to fetch weather data: ${weatherState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -481,11 +479,10 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentForecast.collect { forecastState ->
                     when (forecastState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading forecast data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the forecast data
+                            binding.progressBarDetails.visibility = View.GONE
                             val forecastResponse = forecastState.data
                             val recyclerAdapter = TempAdapter(requireContext())
                             tempListStore = refactorTemperatureList(forecastResponse.list)
@@ -493,8 +490,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                             binding.tempRecyclerView.adapter = recyclerAdapter
                         }
                         is ApiState.Failure -> {
-                            //TODO Handle failure case
-                            Log.e(TAG, "Failed to fetch forecast data: ${forecastState.exception}")
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -507,12 +505,11 @@ class HomeFragment : Fragment() , ReceiverInterface {
                 viewModel.currentForecastDays.collect { forecastDaysState ->
                     when (forecastDaysState) {
                         is ApiState.Loading -> {
-                            //TODO Show loading state if necessary
-                            Log.i(TAG, "Loading forecast days data...")
+                            binding.progressBarDetails.visibility = View.VISIBLE
                         }
 
                         is ApiState.Success -> {
-                            //TODO Handle the success case and update the UI with the forecast days data
+                            binding.progressBarDetails.visibility = View.GONE
                             val forecastResponse = forecastDaysState.data
                             val recyclerAdapter = DayAdapter(requireContext())
                             dayListStore = filterUniqueDaysWithMinMax(forecastResponse.list)
@@ -521,11 +518,9 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
 
                         is ApiState.Failure -> {
-                            //TODO Handle failure case
-                            Log.e(
-                                TAG,
-                                "Failed to fetch forecast days data: ${forecastDaysState.exception}"
-                            )
+                            binding.progressBarDetails.visibility = View.GONE
+                            Toast.makeText(context,
+                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

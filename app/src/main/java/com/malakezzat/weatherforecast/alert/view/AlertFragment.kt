@@ -62,11 +62,11 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
             viewModel.alertList.collect { result ->
                 when (result) {
                     is ApiState.Loading -> {
-                        //TODO handle loading
+                        binding.alertProgressBar.visibility = View.VISIBLE
                         binding.noAlertBackground.visibility = View.VISIBLE
                     }
                     is ApiState.Success -> {
-                        //TODO handle loading
+                        binding.alertProgressBar.visibility = View.GONE
                         binding.noAlertBackground.visibility = View.GONE
                         val recyclerAdapter = AlertAdapter(requireContext()) { item ->
                             viewModel.removeAlert(item)
@@ -78,7 +78,7 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
                         }
                     }
                     is ApiState.Failure -> {
-                        //TODO handle Failure
+                        binding.alertProgressBar.visibility = View.GONE
                         binding.noAlertBackground.visibility = View.VISIBLE
                     }
                 }
