@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.malakezzat.weatherforecast.ApiState
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.worker.AlertWorker
 import com.malakezzat.weatherforecast.database.AppDatabase

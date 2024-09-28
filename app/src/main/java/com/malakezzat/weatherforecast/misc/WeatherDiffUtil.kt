@@ -1,4 +1,4 @@
-package com.malakezzat.weatherforecast
+package com.malakezzat.weatherforecast.misc
 
 import androidx.recyclerview.widget.DiffUtil
 import com.malakezzat.weatherforecast.database.FavoriteDB

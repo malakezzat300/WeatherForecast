@@ -10,7 +10,7 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.malakezzat.weatherforecast.ForecastDiffUtilDays
+import com.malakezzat.weatherforecast.misc.ForecastDiffUtilDays
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.DayTempItemBinding
 import com.malakezzat.weatherforecast.model.DayWeather

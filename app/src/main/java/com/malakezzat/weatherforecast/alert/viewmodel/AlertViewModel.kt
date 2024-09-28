@@ -1,25 +1,21 @@
 package com.malakezzat.weatherforecast.alert.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.WeatherRepository
-import com.malakezzat.weatherforecast.model.WeatherResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class AlertViewModel(private val weatherRepository: WeatherRepository) : ViewModel() {
 
-    private val _alertList = MutableSharedFlow<List<Alert>>()
-    val alertList: SharedFlow<List<Alert>> get() = _alertList
+    private val _alertList = MutableStateFlow<ApiState<List<Alert>>>(ApiState.Loading)
+    val alertList: StateFlow<ApiState<List<Alert>>> get() = _alertList
 
     fun fetchAlertData() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -32,8 +28,12 @@ class AlertViewModel(private val weatherRepository: WeatherRepository) : ViewMod
     }
 
     private suspend fun getAlertData() {
-        weatherRepository.getAllAlerts().collect { alertList ->
-            _alertList.emit(alertList)
+        viewModelScope.launch {
+            weatherRepository.getAllAlerts().catch { e ->
+                _alertList.value = ApiState.Failure(e)
+            }.collect { alertList ->
+                _alertList.value = ApiState.Success(alertList)
+            }
         }
     }
 

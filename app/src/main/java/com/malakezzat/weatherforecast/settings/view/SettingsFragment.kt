@@ -24,12 +24,10 @@ import com.malakezzat.weatherforecast.MainActivity
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.FragmentSettingsBinding
 import com.malakezzat.weatherforecast.location.OsmMapFragment
-import com.malakezzat.weatherforecast.settings.viewmodel.SettingsViewModel
 import java.util.Locale
 
 class SettingsFragment : Fragment() {
 
-    lateinit var viewModel: SettingsViewModel
     lateinit var binding : FragmentSettingsBinding
     private lateinit var sharedPreferences : SharedPreferences
     private lateinit var editor : Editor

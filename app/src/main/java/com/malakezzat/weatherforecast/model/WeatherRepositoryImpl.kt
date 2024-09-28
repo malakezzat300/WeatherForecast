@@ -1,6 +1,6 @@
 package com.malakezzat.weatherforecast.model
 
-import com.malakezzat.weatherforecast.ApiState
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSource

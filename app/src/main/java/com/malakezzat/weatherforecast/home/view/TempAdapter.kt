@@ -10,14 +10,10 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.malakezzat.weatherforecast.ForecastDiffUtil
+import com.malakezzat.weatherforecast.misc.ForecastDiffUtil
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.TempHoursItemBinding
-import com.malakezzat.weatherforecast.model.ForecastResponse
-import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.TempWeather
-import com.malakezzat.weatherforecast.model.WeatherResponse
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date

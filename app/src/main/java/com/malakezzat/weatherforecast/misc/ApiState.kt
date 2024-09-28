@@ -1,4 +1,4 @@
-package com.malakezzat.weatherforecast
+package com.malakezzat.weatherforecast.misc
 
 sealed class ApiState<out T> {
     object Loading : ApiState<Nothing>()

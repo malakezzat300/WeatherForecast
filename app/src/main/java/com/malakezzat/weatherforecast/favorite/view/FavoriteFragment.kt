@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.malakezzat.weatherforecast.ApiState
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
@@ -79,7 +79,6 @@ class FavoriteFragment : Fragment() , FavoriteDialogFragment.FavoriteDialogListe
                         is ApiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                         }
-
                         is ApiState.Success -> {
                             val list = apiState.data
                             if (list.isNotEmpty()) {

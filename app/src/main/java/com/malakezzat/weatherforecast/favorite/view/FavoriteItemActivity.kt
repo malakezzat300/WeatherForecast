@@ -13,14 +13,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.malakezzat.weatherforecast.ApiState
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.connection.ConnectionBroadcastReceiver
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.connection.ReceiverInterface

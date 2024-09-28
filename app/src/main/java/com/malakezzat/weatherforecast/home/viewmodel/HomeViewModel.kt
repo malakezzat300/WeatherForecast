@@ -1,13 +1,11 @@
 package com.malakezzat.weatherforecast.home.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.malakezzat.weatherforecast.ApiState
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ForecastResponse
@@ -16,8 +14,6 @@ import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {

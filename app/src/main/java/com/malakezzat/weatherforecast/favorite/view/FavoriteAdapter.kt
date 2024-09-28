@@ -10,7 +10,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.malakezzat.weatherforecast.FavoriteDiffUtil
+import com.malakezzat.weatherforecast.misc.FavoriteDiffUtil
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.database.FavoriteDB
 import com.malakezzat.weatherforecast.databinding.FavoriteItemBinding

@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkManager
-import com.malakezzat.weatherforecast.AlertDiffUtil
+import com.malakezzat.weatherforecast.misc.AlertDiffUtil
 
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.AlertItemBinding

@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModel
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModelFactory
@@ -57,20 +58,29 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
         factory = AlertViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory).get(AlertViewModel::class.java)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.alertList.collect { list ->
-                if(list.isNotEmpty()){
-                    binding.noAlertBackground.visibility = View.GONE
-                } else {
-                    binding.noAlertBackground.visibility = View.VISIBLE
-                }
-                val recyclerAdapter = AlertAdapter(requireContext()) { item ->
-                    viewModel.removeAlert(item)
-                }
-                recyclerAdapter.submitList(list.toMutableList())
-                binding.alertRecyclerView.apply {
-                    adapter = recyclerAdapter
-                    layoutManager = LinearLayoutManager(requireContext())
+        lifecycleScope.launch {
+            viewModel.alertList.collect { result ->
+                when (result) {
+                    is ApiState.Loading -> {
+                        //TODO handle loading
+                        binding.noAlertBackground.visibility = View.VISIBLE
+                    }
+                    is ApiState.Success -> {
+                        //TODO handle loading
+                        binding.noAlertBackground.visibility = View.GONE
+                        val recyclerAdapter = AlertAdapter(requireContext()) { item ->
+                            viewModel.removeAlert(item)
+                        }
+                        recyclerAdapter.submitList(result.data)
+                        binding.alertRecyclerView.apply {
+                            adapter = recyclerAdapter
+                            layoutManager = LinearLayoutManager(requireContext())
+                        }
+                    }
+                    is ApiState.Failure -> {
+                        //TODO handle Failure
+                        binding.noAlertBackground.visibility = View.VISIBLE
+                    }
                 }
             }
         }
