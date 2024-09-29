@@ -5,7 +5,8 @@ import com.malakezzat.weatherforecast.model.ForecastResponse
 import com.malakezzat.weatherforecast.model.WeatherResponse
 
 
-class WeatherRemoteDataSourceImpl private constructor() : WeatherRemoteDataSource {
+class WeatherRemoteDataSourceImpl private constructor() : WeatherRemoteDataSource,
+    IWeatherRemoteDataSource {
 
     private val weatherService : WeatherService by lazy {
         RetrofitHelper.getInstance().create(WeatherService::class.java)

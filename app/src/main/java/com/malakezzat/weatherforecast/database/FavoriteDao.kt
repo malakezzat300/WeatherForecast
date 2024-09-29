@@ -12,8 +12,11 @@ interface FavoriteDao {
     @Query("SELECT * FROM FAVORITE_LIST")
     fun getFavoriteData() : Flow<List<FavoriteDB>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorite(favoriteDB: FavoriteDB)
+
+    @Query("SELECT * FROM FAVORITE_LIST WHERE id = :id")
+    suspend fun getFavoriteById(id: Int): FavoriteDB?
 
     @Query("DELETE FROM FAVORITE_LIST WHERE deleteId = :favoriteId")
     suspend fun deleteFavoriteById(favoriteId: String)

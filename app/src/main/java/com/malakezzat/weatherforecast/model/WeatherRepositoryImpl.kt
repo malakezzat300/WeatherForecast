@@ -2,15 +2,17 @@ package com.malakezzat.weatherforecast.model
 
 import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.database.FavoriteDB
+import com.malakezzat.weatherforecast.database.IWeatherLocalDataSource
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSource
+import com.malakezzat.weatherforecast.network.IWeatherRemoteDataSource
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
 class WeatherRepositoryImpl(
-    private var weatherRemoteDataSource: WeatherRemoteDataSource,
-    private var weatherLocalDataSource: WeatherLocalDataSource
-) : WeatherRepository {
+    private var weatherRemoteDataSource: IWeatherRemoteDataSource,
+    private var weatherLocalDataSource: IWeatherLocalDataSource
+) : WeatherRepository , IWeatherRepository {
 
     override suspend fun getWeatherOverNetwork(
         lat: Double,

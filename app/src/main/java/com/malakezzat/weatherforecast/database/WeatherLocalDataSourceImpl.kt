@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSourceImpl(
     private val appDatabase: AppDatabase
-) : WeatherLocalDataSource {
+) : WeatherLocalDataSource, IWeatherLocalDataSource {
 
     private var weatherDao: WeatherDao = appDatabase.weatherDAO
     private var alertDao: AlertDao = appDatabase.alertDAO
@@ -52,7 +52,10 @@ class WeatherLocalDataSourceImpl(
     }
 
     override suspend fun insertFavorite(favoriteDB: FavoriteDB) {
-        favoriteDao.insertFavorite(favoriteDB)
+        val existingFavorite = favoriteDao.getFavoriteById(favoriteDB.id)
+        if (existingFavorite == null) {
+            favoriteDao.insertFavorite(favoriteDB)
+        }
     }
 
     override suspend fun deleteFavorite(favoriteDB: FavoriteDB) {
