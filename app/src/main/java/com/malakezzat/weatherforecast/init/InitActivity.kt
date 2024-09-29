@@ -24,7 +24,7 @@ import com.malakezzat.weatherforecast.MainActivity
 import com.malakezzat.weatherforecast.R
 import com.malakezzat.weatherforecast.databinding.ActivityInitBinding
 import com.malakezzat.weatherforecast.location.OsmMapFragment
-
+import java.util.Locale
 
 
 class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogListener {
@@ -42,7 +42,9 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
     override fun onCreate(savedInstanceState: Bundle?) {
         sharedPreferences = getSharedPreferences(getString(R.string.my_preference), Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
-
+        if(sharedPreferences.getBoolean(getString(R.string.arabic_pref),false)){
+            setLocale("ar")
+        }
 
 
         super.onCreate(savedInstanceState)
@@ -62,6 +64,9 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
                     }
                 } else {
                     binding.permissionCard.visibility = View.VISIBLE
+                    binding.cannotFetchLocation.text = getString(R.string.cannot_fetch_location)
+                    binding.cannotFetchLocation.text = getString(R.string.please_allow_weather_to_access_your_location)
+                    binding.cannotFetchLocation.text = getString(R.string.allow)
                 }
             } else if(sharedPreferences.getBoolean(getString(R.string.map),false)){
                 startMainActivity()
@@ -159,14 +164,14 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
 
     fun showEnableLocationDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Location Services Disabled")
-            .setMessage("Please enable location services to use this feature.")
-            .setPositiveButton("Open Settings") { _, _ ->
-                Toast.makeText(this, "Enable Location", Toast.LENGTH_SHORT).show()
+        builder.setTitle(getString(R.string.location_services_disabled))
+            .setMessage(getString(R.string.please_enable_location_services_to_use_this_feature))
+            .setPositiveButton(getString(R.string.open_settings)) { _, _ ->
+                Toast.makeText(this, getString(R.string.enable_location), Toast.LENGTH_SHORT).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
             .create()
             .show()
     }
@@ -207,6 +212,17 @@ class InitActivity : AppCompatActivity(), LocationDialogFragment.LocationDialogL
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestNotificationPermission() {
         ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+
     }
 
 }

@@ -31,7 +31,4 @@ class ConnectionBroadcastReceiver(private val fragment: ReceiverInterface) : Bro
         }
     }
 
-    fun hasConnection() : Boolean{
-        return hasConnection
-    }
 }

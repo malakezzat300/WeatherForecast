@@ -93,4 +93,9 @@
     <string name="saved">Saved</string>
     <string name="please_connect_to_internet_first_and_try_again_later">Please Connect to internet first and try again later.</string>
     <string name="please_enable_notification_from_settings_first">Please Enable Notifications from Settings first.</string>
+    <string name="location_services_disabled">Location Services Disabled</string>
+    <string name="please_enable_location_services_to_use_this_feature">Please enable location services to use this feature.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="enable_location">Enable Location</string>
+    <string name="cancel">Cancel</string>
 </resources>
