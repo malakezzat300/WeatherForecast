@@ -74,6 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:cardCornerRadius="32dp"
+            android:visibility="gone"
             app:cardElevation="18dp"
             android:layout_marginTop="12dp"
             android:layout_marginHorizontal="8dp"
@@ -93,6 +94,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/to_button"
+            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

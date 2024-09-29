@@ -43,6 +43,7 @@ import com.malakezzat.weatherforecast.databinding.FragmentHomeBinding
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.DayWeather
+import com.malakezzat.weatherforecast.model.IWeatherRepository
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.TempWeather
 import com.malakezzat.weatherforecast.model.WeatherResponse
@@ -57,7 +58,7 @@ class HomeFragment : Fragment() , ReceiverInterface {
     private val TAG: String = "HomeFragment"
     private lateinit var viewModel: HomeViewModel
     private lateinit var factory: HomeViewModelFactory
-    private lateinit var repository: WeatherRepository
+    private lateinit var repository: IWeatherRepository
     private lateinit var binding: FragmentHomeBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: Editor
@@ -150,8 +151,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -183,8 +182,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -216,8 +213,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -465,8 +460,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -491,8 +484,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
                         }
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -519,8 +510,6 @@ class HomeFragment : Fragment() , ReceiverInterface {
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

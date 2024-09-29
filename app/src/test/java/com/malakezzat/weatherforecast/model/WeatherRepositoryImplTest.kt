@@ -18,7 +18,7 @@ class WeatherRepositoryTest {
 
     private lateinit var fakeLocalDataSource : FakeLocalDataSource
     private lateinit var fakeRemoteDataSource : FakeRemoteDataSource
-    private lateinit var repository : WeatherRepository
+    private lateinit var repository : IWeatherRepository
 
     val favorite1 = FavoriteDB(1,
         1.23456789,
@@ -172,7 +172,7 @@ class WeatherRepositoryTest {
     }
 
     @Test
-    fun deleteFavoriteTest_duplicates_returnZeroSize() = runTest {
+    fun deleteFavoriteTest_duplicates_returnZero() = runTest {
         repository.insertFavorite(favorite1)
         repository.insertFavorite(favorite1)
 

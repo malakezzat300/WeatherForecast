@@ -44,7 +44,6 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <receiver android:name=".alert.view.AlarmReceiver" />
         <receiver
             android:name=".connection.ConnectionBroadcastReceiver"
             android:enabled="true"

@@ -52,10 +52,7 @@ class WeatherLocalDataSourceImpl(
     }
 
     override suspend fun insertFavorite(favoriteDB: FavoriteDB) {
-        val existingFavorite = favoriteDao.getFavoriteById(favoriteDB.id)
-        if (existingFavorite == null) {
-            favoriteDao.insertFavorite(favoriteDB)
-        }
+        favoriteDao.insertFavorite(favoriteDB)
     }
 
     override suspend fun deleteFavorite(favoriteDB: FavoriteDB) {

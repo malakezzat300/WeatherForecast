@@ -21,6 +21,7 @@ import com.malakezzat.weatherforecast.database.AppDatabase
 import com.malakezzat.weatherforecast.database.WeatherLocalDataSourceImpl
 import com.malakezzat.weatherforecast.databinding.FragmentAlertBinding
 import com.malakezzat.weatherforecast.model.Alert
+import com.malakezzat.weatherforecast.model.IWeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
 import com.malakezzat.weatherforecast.network.WeatherRemoteDataSourceImpl
@@ -30,7 +31,7 @@ class AlertFragment : Fragment(), AlertDialogFragment.AlertDialogListener {
 
     private lateinit var viewModel: AlertViewModel
     private lateinit var factory: AlertViewModelFactory
-    private lateinit var repository: WeatherRepository
+    private lateinit var repository: IWeatherRepository
     private lateinit var binding: FragmentAlertBinding
     private lateinit var sharedPreferences: SharedPreferences
 

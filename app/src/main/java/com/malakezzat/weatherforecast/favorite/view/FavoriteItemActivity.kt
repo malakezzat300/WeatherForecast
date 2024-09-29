@@ -115,8 +115,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -147,8 +145,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -180,8 +176,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -378,8 +372,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -411,8 +403,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -445,8 +435,6 @@ class FavoriteItemActivity(val lat : Double,val lon : Double,val units : String,
 
                         is ApiState.Failure -> {
                             binding.progressBarDetails.visibility = View.GONE
-                            Toast.makeText(context,
-                                getString(R.string.please_check_your_connection), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

@@ -31,6 +31,7 @@ import com.malakezzat.weatherforecast.databinding.DialogAlertBinding
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.malakezzat.weatherforecast.model.Alert
+import com.malakezzat.weatherforecast.model.IWeatherRepository
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepositoryImpl
@@ -44,14 +45,14 @@ class AlertDialogFragment : DialogFragment() {
 
     private var _binding: DialogAlertBinding? = null
     private val binding get() = _binding!!
-    private lateinit var listener: AlertDialogListener
+    private var listener: AlertDialogListener? = null
     private val REQUEST_CODE_OVERLAY_PERMISSION = 1001
     private val REQUEST_CODE_NOTIFICATION_PERMISSION = 1002
     private var fromCalendar = Calendar.getInstance()
     private var toCalendar = Calendar.getInstance()
     private lateinit var viewModel: HomeViewModel
     private lateinit var factory: HomeViewModelFactory
-    private lateinit var repository: WeatherRepository
+    private lateinit var repository: IWeatherRepository
     private lateinit var sharedPreferences: SharedPreferences
 
     interface AlertDialogListener {
@@ -157,7 +158,7 @@ class AlertDialogFragment : DialogFragment() {
         )
 
         newAlert.workId = scheduleNotification(requireContext(), fromCalendar.timeInMillis, newAlert)
-        listener.onDialogPositiveClick(newAlert)
+        listener?.onDialogPositiveClick(newAlert)
         dismiss()
     }
 

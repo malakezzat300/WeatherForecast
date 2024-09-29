@@ -5,14 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.model.Alert
+import com.malakezzat.weatherforecast.model.IWeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-class AlertViewModel(private val weatherRepository: WeatherRepository) : ViewModel() {
+class AlertViewModel(private val weatherRepository: IWeatherRepository) : ViewModel() {
 
     private val _alertList = MutableStateFlow<ApiState<List<Alert>>>(ApiState.Loading)
     val alertList: StateFlow<ApiState<List<Alert>>> get() = _alertList
@@ -27,9 +29,15 @@ class AlertViewModel(private val weatherRepository: WeatherRepository) : ViewMod
         }
     }
 
+    init {
+        fetchAlertData()
+    }
+
     private suspend fun getAlertData() {
         viewModelScope.launch {
-            weatherRepository.getAllAlerts().catch { e ->
+            weatherRepository.getAllAlerts()
+                .onStart { _alertList.value = ApiState.Loading
+            }.catch { e ->
                 _alertList.value = ApiState.Failure(e)
             }.collect { alertList ->
                 _alertList.value = ApiState.Success(alertList)

@@ -93,5 +93,4 @@
     <string name="saved">Saved</string>
     <string name="please_connect_to_internet_first_and_try_again_later">Please Connect to internet first and try again later.</string>
     <string name="please_enable_notification_from_settings_first">Please Enable Notifications from Settings first.</string>
-    <string name="please_check_your_connection">Please Check your Connection</string>
 </resources>

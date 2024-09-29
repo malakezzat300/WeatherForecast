@@ -129,4 +129,7 @@ dependencies {
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation ("androidx.test:core-ktx:$androidXTestCoreVersion")
     testImplementation ("androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion")
+    // Mockito for Java
+    testImplementation ("org.mockito:mockito-core:5.0.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }

@@ -9,6 +9,7 @@ import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.database.WeatherDB
 import com.malakezzat.weatherforecast.model.DayWeather
 import com.malakezzat.weatherforecast.model.ForecastResponse
+import com.malakezzat.weatherforecast.model.IWeatherRepository
 import com.malakezzat.weatherforecast.model.ListF
 import com.malakezzat.weatherforecast.model.WeatherRepository
 import com.malakezzat.weatherforecast.model.WeatherResponse
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
+class HomeViewModel(private val weatherRepository: IWeatherRepository) : ViewModel() {
 
     private val _currentWeather = MutableStateFlow<ApiState<WeatherResponse>>(ApiState.Loading)
     val currentWeather: StateFlow<ApiState<WeatherResponse>> get() = _currentWeather
@@ -57,7 +58,7 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     fun fetchWeatherData(lat: Double, lon: Double,units : String = "",lang: String = "") {
         viewModelScope.launch {
             try {
-                getWeatherData(lat, lon,units,lang)
+                getWeatherData(lat,lon,units,lang)
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to fetch weather data: ${e.message}")
             }
@@ -67,7 +68,7 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
     fun fetchForecastData(lat: Double, lon: Double,units : String = "",lang: String = "") {
         viewModelScope.launch {
             try {
-                getForecastData(lat, lon,units,lang)
+                getForecastData(lat,lon,units,lang)
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Failed to fetch forecast data: ${e.message}")
             }
@@ -93,7 +94,7 @@ class HomeViewModel(val weatherRepository: WeatherRepository) : ViewModel() {
 
     private suspend fun getForecastData(lat : Double, lon : Double,units: String,lang :String) {
         val forecastData =
-            weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, units = units, lang = lang)
+            weatherRepository.getForecastOverNetwork(lat = lat, lon = lon, cnt = 7, units = units, lang = lang)
         _currentForecast.emit(forecastData)
     }
 
