@@ -140,6 +140,7 @@ class HomeFragment : Fragment() , ReceiverInterface {
                             val weatherResponse = weatherState.data
                             Log.i(TAG, "Weather data: ${weatherResponse.dt}")
                             weatherResponseStore = weatherResponse
+                            binding.cityName.text = weatherResponse.name
                             binding.weatherResponse = weatherResponse
                             binding.date = dateConverter(weatherResponse.dt)
                             setIcon(weatherResponse.weather[0].icon)

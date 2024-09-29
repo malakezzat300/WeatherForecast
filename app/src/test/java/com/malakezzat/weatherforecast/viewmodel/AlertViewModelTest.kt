@@ -1,26 +1,20 @@
 package com.malakezzat.weatherforecast.viewmodel
 
-import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.malakezzat.weatherforecast.alert.viewmodel.AlertViewModel
 import com.malakezzat.weatherforecast.database.FakeLocalDataSource
-import com.malakezzat.weatherforecast.home.viewmodel.HomeViewModel
 import com.malakezzat.weatherforecast.misc.ApiState
 import com.malakezzat.weatherforecast.model.Alert
 import com.malakezzat.weatherforecast.model.FakeWeatherRepository
 import com.malakezzat.weatherforecast.network.FakeRemoteDataSource
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
-import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
 class AlertViewModelTest {
@@ -45,44 +39,28 @@ class AlertViewModelTest {
     private val alert3 = Alert(3,123456,123456,
         123456,123456,3,"message3","123-abc3","12ab3")
 
+
     @Test
-    fun addAlertTest_addMultipleAlerts_insertsSuccessfully() = runTest {
+    fun addAlertTest_addAlert_addsFirstAlert() = runTest {
         alertViewModel.addAlert(alert1)
-        alertViewModel.addAlert(alert2)
-        alertViewModel.addAlert(alert3)
 
-        val alertList = alertViewModel.alertList.first()
+        val apiState = alertViewModel.alertList.first()
 
-        assertThat(alertList, `is`(ApiState.Success(listOf(alert1, alert2, alert3))))
+        assertThat(apiState, `is`(ApiState.Success(listOf(alert1))))
     }
 
     @Test
-    fun addAlertTest_noInitialAlerts_addsFirstAlert() = runTest {
-        alertViewModel.fetchAlertData()
-
-        alertViewModel.addAlert(alert1)
-
-        val alertList = alertViewModel.alertList
-            .take(2)
-            .toList()
-
-        assertThat(alertList.last(), `is`(ApiState.Success(listOf(alert1))))
-    }
-
-    @Test
-    fun addAlertTest_addDuplicateAlert_doesNotAddDuplicate() = runBlockingTest {
+    fun addAlertTest_addDuplicateAlert_doesNotAddDuplicate() = runTest {
         alertViewModel.fetchAlertData() // Fetch alerts first
 
         alertViewModel.addAlert(alert1) // Add the first alert
         alertViewModel.addAlert(alert1) // Try adding the duplicate
 
         // Collect the result of the alert list
-        val alertList = alertViewModel.alertList
-            .take(2) // Collect the emissions
-            .toList()
+        val alertList = alertViewModel.alertList.value
 
         // Assert that the last emitted value is the expected state
-        assertThat(alertList.last(), `is`(ApiState.Success(listOf(alert1))))
+        assertThat(alertList, `is`(ApiState.Success(listOf(alert1))))
     }
 
     @Test
@@ -91,7 +69,7 @@ class AlertViewModelTest {
         alertViewModel.addAlert(alert2)
         alertViewModel.addAlert(alert1)
 
-        val alertList = alertViewModel.alertList.first()
+        val alertList = alertViewModel.alertList.value
 
         assertThat(alertList, `is`(ApiState.Success(listOf(alert1, alert2))))
     }
@@ -111,16 +89,10 @@ class AlertViewModelTest {
     }
 
     @Test
-    fun addAlertTest_emptyList_addAlertSuccessfully() = runTest {
-        val initialList = alertViewModel.alertList.first()
+    fun addAlertTest_isEmpty() = runTest {
+        val updatedList = (alertViewModel.alertList.value as ApiState.Success).data
 
-        assertThat(initialList, `is`(ApiState.Success(emptyList())))
-
-        alertViewModel.addAlert(alert1)
-
-        val updatedList = alertViewModel.alertList.first()
-
-        assertThat(updatedList, `is`(ApiState.Success(listOf(alert1))))
+        assertThat(updatedList, `is`(emptyList()))
     }
 
     @Test
@@ -140,7 +112,7 @@ class AlertViewModelTest {
 
         alertViewModel.removeAlert(alert2)
 
-        val alertList = alertViewModel.alertList.first()
+        val alertList = alertViewModel.alertList.value
 
         assertThat(alertList, `is`(ApiState.Success(listOf(alert1))))
     }
@@ -149,7 +121,7 @@ class AlertViewModelTest {
     fun removeAlertTest_emptyList_doesNothing() = runTest {
         alertViewModel.removeAlert(alert1)
 
-        val alertList = alertViewModel.alertList.first()
+        val alertList = alertViewModel.alertList.value
 
         assertThat(alertList, `is`(ApiState.Success(emptyList())))
     }
@@ -161,7 +133,7 @@ class AlertViewModelTest {
 
         alertViewModel.removeAlert(alert1)
 
-        val alertList = alertViewModel.alertList.first()
+        val alertList = alertViewModel.alertList.value
 
         assertThat(alertList, `is`(ApiState.Success(listOf(alert2))))
     }
@@ -174,7 +146,7 @@ class AlertViewModelTest {
         alertViewModel.removeAlert(alert1)
         alertViewModel.removeAlert(alert2)
 
-        val alertList = alertViewModel.alertList.first()
+        val alertList = alertViewModel.alertList.value
 
         assertThat(alertList, `is`(ApiState.Success(emptyList())))
     }

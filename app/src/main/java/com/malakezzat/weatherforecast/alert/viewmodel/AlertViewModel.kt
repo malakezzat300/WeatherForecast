@@ -20,7 +20,7 @@ class AlertViewModel(private val weatherRepository: IWeatherRepository) : ViewMo
     val alertList: StateFlow<ApiState<List<Alert>>> get() = _alertList
 
     fun fetchAlertData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 getAlertData()
             } catch (e: Exception) {
@@ -34,22 +34,19 @@ class AlertViewModel(private val weatherRepository: IWeatherRepository) : ViewMo
     }
 
     private suspend fun getAlertData() {
-        viewModelScope.launch {
-            weatherRepository.getAllAlerts()
-                .onStart { _alertList.value = ApiState.Loading
-            }.catch { e ->
-                _alertList.value = ApiState.Failure(e)
-            }.collect { alertList ->
+        weatherRepository.getAllAlerts()
+            .onStart { _alertList.value = ApiState.Loading }
+            .catch { e -> _alertList.value = ApiState.Failure(e) }
+            .collect { alertList ->
                 _alertList.value = ApiState.Success(alertList)
             }
-        }
     }
 
     fun removeAlert(alert: Alert) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 weatherRepository.deleteAlert(alert)
-                getAlertData()
+                fetchAlertData()
             } catch (e: Exception) {
                 Log.e("AlertViewModel", "Failed to remove Alert: ${e.message}")
             }
@@ -60,7 +57,7 @@ class AlertViewModel(private val weatherRepository: IWeatherRepository) : ViewMo
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 weatherRepository.insertAlert(alert)
-                getAlertData()
+                fetchAlertData()
             } catch (e: Exception) {
                 Log.e("AlertViewModel", "Failed to add Alert: ${e.message}")
             }

@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.flow
 class FakeLocalDataSource(
     private var favoriteDBList: MutableList<FavoriteDB>? = mutableListOf()
 ): IWeatherLocalDataSource{
+
+    private val alerts = mutableListOf<Alert>()
+
     override suspend fun getStoredWeather(): Flow<List<WeatherDB>> {
         TODO("Not yet implemented")
     }
@@ -29,15 +32,19 @@ class FakeLocalDataSource(
     }
 
     override suspend fun getAllAlerts(): Flow<List<Alert>> {
-        TODO("Not yet implemented")
+        return flow {
+            emit(alerts)
+        }
     }
 
     override suspend fun insertAlert(alert: Alert) {
-        TODO("Not yet implemented")
+        if (!alerts.any { it.id == alert.id }) {
+            alerts.add(alert)
+        }
     }
 
     override suspend fun deleteAlert(alert: Alert) {
-        TODO("Not yet implemented")
+        alerts.removeIf { it.id == alert.id }
     }
 
     override suspend fun deleteAlertById(alertId: String) {

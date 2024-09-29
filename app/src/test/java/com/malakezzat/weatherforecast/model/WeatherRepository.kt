@@ -65,19 +65,16 @@ class FakeWeatherRepository(
     }
 
     override suspend fun insertAlert(alert: Alert) {
-        if (!alerts.any { it.id == alert.id }) {
-            alerts.add(alert)
-        }
+        weatherLocalDataSource.insertAlert(alert)
     }
 
     override suspend fun deleteAlert(alert: Alert) {
-        alerts.removeIf { it.id == alert.id }
+        weatherLocalDataSource.deleteAlert(alert)
     }
 
     override suspend fun getAllAlerts(): Flow<List<Alert>> {
-        return flow {
-            emit(alerts)
-        }
+        return weatherLocalDataSource.getAllAlerts()
+
     }
 
     override suspend fun deleteAlertById(alertId: String) {
