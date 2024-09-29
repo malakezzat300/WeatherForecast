@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,15 +50,13 @@ class AlertViewModelTest {
 
     @Test
     fun addAlertTest_addDuplicateAlert_doesNotAddDuplicate() = runTest {
-        alertViewModel.fetchAlertData() // Fetch alerts first
+        alertViewModel.fetchAlertData()
 
-        alertViewModel.addAlert(alert1) // Add the first alert
-        alertViewModel.addAlert(alert1) // Try adding the duplicate
+        alertViewModel.addAlert(alert1)
+        alertViewModel.addAlert(alert1)
 
-        // Collect the result of the alert list
         val alertList = alertViewModel.alertList.value
 
-        // Assert that the last emitted value is the expected state
         assertThat(alertList, `is`(ApiState.Success(listOf(alert1))))
     }
 
