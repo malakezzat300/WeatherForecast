@@ -64,4 +64,5 @@
     <string name="open_settings">فتح الإعدادات</string>
     <string name="enable_location">تمكين الموقع</string>
     <string name="cancel">الغاء</string>
+    <string name="get_from_maps">الموقع من الخرائط</string>
 </resources>

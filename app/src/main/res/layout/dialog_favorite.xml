@@ -50,7 +50,7 @@
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/button_background"
-            android:text="Get From Maps"
+            android:text="@string/get_from_maps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/add_button" />
