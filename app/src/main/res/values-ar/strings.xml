@@ -65,4 +65,5 @@
     <string name="enable_location">تمكين الموقع</string>
     <string name="cancel">الغاء</string>
     <string name="get_from_maps">الموقع من الخرائط</string>
+    <string name="select_item">اختار مكان</string>
 </resources>

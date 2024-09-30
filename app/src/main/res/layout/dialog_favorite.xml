@@ -14,7 +14,7 @@
             android:id="@+id/auto_complete_text_input_layout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:hint="Select item"
+            android:hint="@string/select_item"
             android:layout_marginHorizontal="12dp"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/colorPrimary"
